@@ -1,0 +1,45 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.Cart_Items>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Catalog_Items.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Cart.CartID)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Catalog_Items.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cart.CartID)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Cart_ItemID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Cart_ItemID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Cart_ItemID })
+            </td>
+        </tr>
+    }
+</table>

@@ -1,0 +1,21 @@
+﻿@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+@{ SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+<h4>By the end of my speech my audience will @ViewBag.purposeStatement</h4>
+@{
+        var speechStrats = ViewBag.speechStrats;
+
+        foreach (SpeechStrategy strat in speechStrats)
+        {
+            string chkd = string.Empty;
+            if (strat.Best == true) { chkd = "checked"; } else { chkd = string.Empty; }
+        <div class="prettyRadio">
+            <label class="radio-inline">
+                <input type="radio" id="@strat.SpeechStrategyID" class="radio" name="strats" value="1" onchange="jsAutoSaveBestStrat(this.id, this.checked);" @chkd> @strat.Strategy.Name
+                <div class="check"><div class="inside"></div></div>
+            </label><br />
+        </div>
+
+    }
+}

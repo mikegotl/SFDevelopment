@@ -1,0 +1,39 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.Assess>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Assessment Choices</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AssessType.Name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AssessType.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.AssessID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.AssessID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.AssessID })
+        </td>
+    </tr>
+}
+
+</table>

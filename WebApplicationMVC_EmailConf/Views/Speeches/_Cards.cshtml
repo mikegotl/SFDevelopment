@@ -1,0 +1,86 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.SpeechMainPoint>
+@using WebApplicationMVC_EmailConf.Models
+@using WebApplicationMVC_EmailConf.Controllers
+
+@{
+    int cardCount = 1;
+    string lb = "\n";
+    string sp = "       ";
+}
+
+<div class="col-md-4">
+    <h5>Card @cardCount: Introduction</h5>
+</div>
+<div class="col-md-8">
+    @{
+        string card1 = string.Empty;
+        card1 = "Attn Grabber: " + ViewBag.AttnGrab + lb;
+        card1 += "Thesis:" + lb;
+        card1 += "Relate: " + ViewBag.ThesisRelatePathos + lb;
+        card1 += sp + "State: " + ViewBag.Ethos + lb;
+        card1 += sp + "Support/Quote: " + ViewBag.ThesisRelatePathos + lb;
+        card1 += "Preview: See Slides";
+    }
+    <textarea class="form-control" rows="10">@card1</textarea>
+</div>
+
+@{
+    cardCount += 1;
+    foreach (SpeechMainPoint smp in Model)
+    {
+        var mpStr = string.Empty;
+        RomanNumerals rn = (RomanNumerals)cardCount - 1;
+
+        if (smp.MainPointID == null || !string.IsNullOrEmpty(smp.MainPointFreeText))
+        {
+            mpStr = @smp.MainPointFreeText;
+        }
+        else {
+            mpStr = smp.MainPoint.Name;
+        }
+
+        string cardStr = string.Empty;
+        cardStr = rn + ". " + mpStr + lb;
+
+        <div class="col-md-4">
+            <h5>Card @cardCount: Main Point</h5>
+        </div>
+
+        <div class="col-md-8">
+            @foreach (SpeechSubPoint ssp in smp.SpeechSubPoints.ToList<SpeechSubPoint>())
+            {
+                cardStr += sp + ssp.SubPointFreeText + lb;
+
+                cardStr += sp + sp + "1. Source: See Slide - Definition" + lb;
+                cardStr += sp + sp + "2. Connection:" + lb;
+
+                foreach (SpeechSubpointConnection item in ssp.SpeechSubpointConnections)
+                {
+                    cardStr += sp + sp + sp + item.ConnectionType.Name + ": " + item.Text + lb;
+                }
+            }
+            <textarea class="form-control" rows="10">@cardStr</textarea>
+        </div>
+        <div class="clearfix"></div>
+        cardCount += 1;
+    }
+}
+
+<div class="col-md-4">
+    <h5>Card @cardCount: Conclusion</h5>
+</div>
+<div class="col-md-8">
+    @{
+        string card;
+        card = "Review Thesis:" + lb;
+        card += sp + "Support/Quote: " + ViewBag.ThesisRelatePathos + lb;
+        card += sp + "State: " + ViewBag.Ethos+lb;
+        card += sp + "Relate: " + ViewBag.ThesisRelatePathos+lb+lb;
+
+        card += "Preview: See Slides" + lb;
+        card += "Review Attn Grabber:" + ViewBag.AttnGrab;
+    }
+    <textarea class="form-control" rows="10">@card</textarea>
+    <div class="clearfix"></div>
+    @Html.ActionLink("Export to Word", "ExportCards", null, new { @class = "btn btn-primary hidden-print" })
+</div>

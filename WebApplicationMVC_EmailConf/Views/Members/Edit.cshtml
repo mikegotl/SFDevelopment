@@ -1,0 +1,530 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Member
+@using WebApplicationMVC_EmailConf.Models
+@using WebApplicationMVC_EmailConf.Controllers
+@{SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>@Model.FirstName's @MyHelpers.LoggedInMember.MemberType.Name Profile</h2>
+<hr />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+@using (Html.BeginForm("Edit", "Members", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @*@Html.AntiForgeryToken()*@
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.MemberID)
+    @Html.HiddenFor(model => model.UserID)
+    @Html.HiddenFor(model => model.MemberTypeID)
+
+    <div class="container">
+        <div class="row">
+            <div class="form-group">
+                <input type="submit" value="Save Profile" class="btn btn-primary" />
+            </div>
+        </div>
+        <div class="col-md-10">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">About Me</a></li>
+                @*<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">My Profile Picture(s)</a></li>*@
+                <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">My Speaker Profile</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="home">
+
+                    <div class="col-md-12 well">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="FirstName">First</label>
+                                <input type="text" id="FirstName" name="FirstName" value="@Model.FirstName" class="form-control" placeholder="First Name" />
+                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="LastName">Last</label>
+                                <input type="text" id="LastName" name="LastName" value="@Model.LastName" class="form-control" placeholder="Last Name" />
+                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="Gender">Gender</label>
+                                @Html.DropDownList("Gender", null, htmlAttributes: new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 well">
+                        <div class="form-group">
+                            <label for="DOB">DOB</label>
+                            @Html.EditorFor(model => model.DOB, new { Format = "MDY", PreviousYearCount = 100, NextYearCount = 0, htmlAttributes = new { @class = "form-control" } })
+
+                            @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-12 well">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" id="Location" name="Location" class="form-control" placeholder="City or Town" value="@Model.Location" />
+                                @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>State</label>
+                                @Html.DropDownListFor(x => x.State, MyHelpers.States, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    @*INSTITUTION*@
+                    @if ((bool)ViewBag.MemberTypeIsAcademic)
+                    {
+                        <div class="col-md-12 well">
+                            <div class="clearfix"></div>
+                            <div class="col-md-6">
+                                <label>Institution Lookup</label>
+                                <input type="text" class="form-control" id="ilookup" name="ilookup" placeholder="Type in School" />
+                            </div>
+                            <div class="col-md-6">
+                                <label>Saved Institution Name</label><br />
+                                @ViewBag.InstitutionName
+                            </div>
+                            <div class="col-md-12">
+                                @{
+                                    try
+                                    {
+                                        if (MyHelpers.LoggedInMember.MemberType.Name.Contains("Professor"))
+                                        {
+                                            <label>Manage Courses:</label>
+                                            <div class="well">
+                                                <a href="/courses">Link to my courses</a>
+                                                @try
+                                                {
+                                                    foreach (Course c in Model.Courses)
+                                                    {
+                                                        <span><u>@c.courseCode:</u> @c.name.  </span>
+                                                    }
+
+                                                }
+                                                catch (Exception)
+                                                {
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+                                }
+                            </div>
+                        </div>
+                                    }
+
+                                    @*END INSTITUTION*@
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Highest Education</label>
+                                            @Html.DropDownList("HighestEducationID", null, htmlAttributes: new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+
+                                        <div class="form-group">
+                                            <label>About Me</label>
+                                            <textarea id="AboutMe" name="AboutMe" class="form-control" maxlength="128" placeholder="About yourself in 128 characters or less">@Model.AboutMe</textarea>
+                                            @Html.ValidationMessageFor(model => model.AboutMe, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="profile">
+                                    <div class="form-group col-md-12">
+                                        <label for="file">Upload Image:</label>
+                                        <input class="btn btn-default" type="file" name="file" id="file" /><br><br>
+                                        <input class="btn btn-default" type="submit" value="Upload Image" />
+                                        <br><br>
+                                        @ViewBag.Message
+                                    </div>
+                                    <div class="col-md-12">
+                                        @foreach (MemberMedia mm in Model.MemberMedias)
+                                        {
+                                            <div class="thumbnail col-md-6">
+                                                @if (mm.PrimaryPic == true)
+                    {
+                                                    <input type="button" value="Primary" class="btn btn-primary btn-block" disabled="disabled" />
+                                                    <a href="#">
+                                                        <img src="@mm.Path.Replace("~","")" style="height:112px;" onclick="javascript: window.location = ('@Url.Action("AssignPrimary", "Members", new { id = mm.MemberMediaID})')" />
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="#">
+                                                        <img src="@mm.Path.Replace("~","")" style="height:150px;" onclick="javascript: window.location = ('@Url.Action("AssignPrimary", "Members", new { id = mm.MemberMediaID})')" />
+                                                    </a>
+                                                }
+
+                                                <input type="button" class="btn btn-warning btn-block" onclick="javascript: window.location = ('@Url.Action("DeleteMyProfPic", "Members", new { id = mm.MemberMediaID })')" value="Remove" />
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="messages">
+                                    <br />
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label>How much anxiety do you experience?</label><br />
+                                            <p>
+                                                Take the Personal Report of Public Speaking Anxiety (PRPSA) test developed by J.C. McCroskey (1970)
+                                            </p>
+
+                                            <b>Directions:</b>
+                                            <p>This instrument is composed of thirty-four statements concerning feelings about communicating with other people.</p>
+                                            <b>Strongly Disagree = 1;  Disagree = 2;  Neutral = 3;  Agree = 4; Strongly Agree = 5</b><br />
+                                            <button class="btn btn-primary btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                                Take Test
+                                            </button>
+                                            <div class="collapse" id="collapseExample">
+                                                <div class="well">
+                                                    <ul class="list-group">
+                                                        @{
+
+                                                            foreach (AnxietyQuestion q in ViewBag.aQuestions)
+                                                            {
+                                                                var name = "anx" + q.ID.ToString();
+
+                                                                <li class="list-group-item">
+                                                                    <b>@q.ID @q.QuestionText</b>
+                                                                    <br />
+                                                                    <span>
+                                                                        Strongly Disagree
+                                                                        <input type='radio' name=@name value='1' />
+                                                                        <input type='radio' name=@name value='2' />
+                                                                        <input type='radio' name=@name value='3' />
+                                                                        <input type='radio' name=@name value='4' />
+                                                                        <input type='radio' name=@name value='5' />
+                                                                        Strongly Agree
+                                                                    </span>
+                                                                </li>
+                                                            }
+                                                        }
+                                                    </ul>
+                                                    @*<ul class="list-group">
+                                                            <li class='list-group-item'>
+                                                                <b>1. While preparing for giving a speech, I feel tense and nervous.</b><br />
+                                                                <span>Strongly Disagree <input type='radio' name='anx1' value='1' /> <input type='radio' name='anx1' value='2' /> <input type='radio' name='anx1' value='3' /> <input type='radio' name='anx1' value='4' /> <input type='radio' name='anx1' value='5' />Strongly Agree</span>
+                                                            </li>
+                                                            <li class='list-group-item'>
+                                                                <b>2. I feel tense when I see the words "speech" and "public speech" on a course outline when studying.</b>
+                                                            </li>
+                                                            <li class='list-group-item'>
+                                                                <b>3. My thoughts become confused and jumbled when I am giving a speech.</b>
+                                                            </li>
+                                                            <li class='list-group-item'>
+                                                                <b>4. Right after giving a speech I feel that I have had a pleasant experience.</b>
+                                                            </li>
+                                                            <li class='list-group-item'>
+                                                                <b>5. I get anxious when I think about a speech coming up.</b>
+                                                            </li>
+                                                            <li class='list-group-item'>
+                                                                <b>6. I have no fear of giving a speech.</b>
+                                                                <input type='radio' name='anx6' value='1' /> <input type='radio' name='anx6' value='2' /> <input type='radio' name='anx6' value='3' /> <input type='radio' name='anx6' value='4' /> <input type='radio' name='anx6' value='5' />
+                                                            </li>
+                                                            <li class='list-group-item'>
+                                                                <b>7. Although I am nervous just before starting a speech, I soon settle down after starting and feel calm and comfortable.</b>
+                                                                <input type='radio' name='anx7' value='1' /> <input type='radio' name='anx7' value='2' /> <input type='radio' name='anx7' value='3' /> <input type='radio' name='anx7' value='4' /> <input type='radio' name='anx7' value='5' />
+                                                            </li>
+                                                            <li class='list-group-item'>
+                                                                <b>8. I look forward to giving a speech.</b>
+                                                                <input type='radio' name='anx8' value='1' /> <input type='radio' name='anx8' value='2' /> <input type='radio' name='anx8' value='3' /> <input type='radio' name='anx8' value='4' /> <input type='radio' name='anx8' value='5' />
+                                                            </li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx9' value='1' /> <input type='radio' name='anx9' value='2' /> <input type='radio' name='anx9' value='3' /> <input type='radio' name='anx9' value='4' /> <input type='radio' name='anx9' value='5' /> 9. When the instructor announces a speaking assignment in class, I can feel myself getting tense.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx10' value='1' /> <input type='radio' name='anx10' value='2' /> <input type='radio' name='anx10' value='3' /> <input type='radio' name='anx10' value='4' /> <input type='radio' name='anx10' value='5' /> 10. My hands tremble when I am giving a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx11' value='1' /> <input type='radio' name='anx11' value='2' /> <input type='radio' name='anx11' value='3' /> <input type='radio' name='anx11' value='4' /> <input type='radio' name='anx11' value='5' /> 11. I feel relaxed when I am giving a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx12' value='1' /> <input type='radio' name='anx12' value='2' /> <input type='radio' name='anx12' value='3' /> <input type='radio' name='anx12' value='4' /> <input type='radio' name='anx12' value='5' /> 12. I enjoy preparing for a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx13' value='1' /> <input type='radio' name='anx13' value='2' /> <input type='radio' name='anx13' value='3' /> <input type='radio' name='anx13' value='4' /> <input type='radio' name='anx13' value='5' /> 13. I am in constant fear of forgetting what I prepared to say.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx14' value='1' /> <input type='radio' name='anx14' value='2' /> <input type='radio' name='anx14' value='3' /> <input type='radio' name='anx14' value='4' /> <input type='radio' name='anx14' value='5' /> 14. I get anxious if someone asks me something about my topic that I do not know.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx15' value='1' /> <input type='radio' name='anx15' value='2' /> <input type='radio' name='anx15' value='3' /> <input type='radio' name='anx15' value='4' /> <input type='radio' name='anx15' value='5' /> 15. I face the prospect of giving a speech with confidence.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx16' value='1' /> <input type='radio' name='anx16' value='2' /> <input type='radio' name='anx16' value='3' /> <input type='radio' name='anx16' value='4' /> <input type='radio' name='anx16' value='5' /> 16. I feel that I am in complete possession of myself while giving a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx17' value='1' /> <input type='radio' name='anx17' value='2' /> <input type='radio' name='anx17' value='3' /> <input type='radio' name='anx17' value='4' /> <input type='radio' name='anx17' value='5' /> 17. My mind is clear when giving a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx18' value='1' /> <input type='radio' name='anx18' value='2' /> <input type='radio' name='anx18' value='3' /> <input type='radio' name='anx18' value='4' /> <input type='radio' name='anx18' value='5' /> 18. I do not dread giving a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx19' value='1' /> <input type='radio' name='anx19' value='2' /> <input type='radio' name='anx19' value='3' /> <input type='radio' name='anx19' value='4' /> <input type='radio' name='anx19' value='5' /> 19. I perspire just before starting a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx20' value='1' /> <input type='radio' name='anx20' value='2' /> <input type='radio' name='anx20' value='3' /> <input type='radio' name='anx20' value='4' /> <input type='radio' name='anx20' value='5' /> 20. My heart beats very fast just as I start a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx21' value='1' /> <input type='radio' name='anx21' value='2' /> <input type='radio' name='anx21' value='3' /> <input type='radio' name='anx21' value='4' /> <input type='radio' name='anx21' value='5' /> 21. I experience considerable anxiety while sitting in the room just before my speech starts.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx22' value='1' /> <input type='radio' name='anx22' value='2' /> <input type='radio' name='anx22' value='3' /> <input type='radio' name='anx22' value='4' /> <input type='radio' name='anx22' value='5' /> 22. Certain parts of my body feel very tense and rigid while giving a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx23' value='1' /> <input type='radio' name='anx23' value='2' /> <input type='radio' name='anx23' value='3' /> <input type='radio' name='anx23' value='4' /> <input type='radio' name='anx23' value='5' /> 23. Realizing that only a little time remains in a speech makes me very tense and anxious.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx24' value='1' /> <input type='radio' name='anx24' value='2' /> <input type='radio' name='anx24' value='3' /> <input type='radio' name='anx24' value='4' /> <input type='radio' name='anx24' value='5' /> 24. While giving a speech, I know I can control my feelings of tension and stress.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx25' value='1' /> <input type='radio' name='anx25' value='2' /> <input type='radio' name='anx25' value='3' /> <input type='radio' name='anx25' value='4' /> <input type='radio' name='anx25' value='5' /> 25. I breathe faster just before starting a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx26' value='1' /> <input type='radio' name='anx26' value='2' /> <input type='radio' name='anx26' value='3' /> <input type='radio' name='anx26' value='4' /> <input type='radio' name='anx26' value='5' /> 26. I feel comfortable and relaxed in the hour or so just before giving a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx27' value='1' /> <input type='radio' name='anx27' value='2' /> <input type='radio' name='anx27' value='3' /> <input type='radio' name='anx27' value='4' /> <input type='radio' name='anx27' value='5' /> 27. I do poorer on speeches because I am anxious.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx28' value='1' /> <input type='radio' name='anx28' value='2' /> <input type='radio' name='anx28' value='3' /> <input type='radio' name='anx28' value='4' /> <input type='radio' name='anx28' value='5' /> 28. I feel anxious when the teacher announces the date of a speaking assignment.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx29' value='1' /> <input type='radio' name='anx29' value='2' /> <input type='radio' name='anx29' value='3' /> <input type='radio' name='anx29' value='4' /> <input type='radio' name='anx29' value='5' /> 29. When I make a mistake while giving a speech, I find it hard to concentrate on the parts that follow.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx30' value='1' /> <input type='radio' name='anx30' value='2' /> <input type='radio' name='anx30' value='3' /> <input type='radio' name='anx30' value='4' /> <input type='radio' name='anx30' value='5' /> 30. During an important speech I experience a feeling of helplessness building up inside me.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx31' value='1' /> <input type='radio' name='anx31' value='2' /> <input type='radio' name='anx31' value='3' /> <input type='radio' name='anx31' value='4' /> <input type='radio' name='anx31' value='5' /> 31. I have trouble falling asleep the night before a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx32' value='1' /> <input type='radio' name='anx32' value='2' /> <input type='radio' name='anx32' value='3' /> <input type='radio' name='anx32' value='4' /> <input type='radio' name='anx32' value='5' /> 32. My heart beats very fast while I present a speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx33' value='1' /> <input type='radio' name='anx33' value='2' /> <input type='radio' name='anx33' value='3' /> <input type='radio' name='anx33' value='4' /> <input type='radio' name='anx33' value='5' /> 33. I feel anxious while waiting to give my speech.</li>
+                                                            <li class='list-group-item'> <input type='radio' name='anx34' value='1' /> <input type='radio' name='anx34' value='2' /> <input type='radio' name='anx34' value='3' /> <input type='radio' name='anx34' value='4' /> <input type='radio' name='anx34' value='5' /> 34. While giving a speech, I get so nervous I forget facts I really know.</li>
+                                                        </ul>*@
+                                                </div>
+                                                <a id="calcAnx" href="#" class="btn btn-primary">Calculate</a><br />
+                                            </div>
+                                            @*@Html.EditorFor(m => m.AnxietyLevel)*@
+                                            <br /><br />
+                                            <label>Test Results:</label>
+                                            <textarea readonly="readonly" id="AnxietyLevel" name="AnxietyLevel" rows="5" class="form-control">@Model.AnxietyLevel</textarea>
+                                            @Html.ValidationMessageFor(model => model.AnxietyLevel, "", new { @class = "text-danger" })
+
+                                            <label id="anxResult"></label><br /><br />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Experience Level</label>
+                                                @Html.DropDownList("ExperienceLevel", null, htmlAttributes: new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.ExperienceLevel, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 well">
+                                            <div class="form-group">
+                                                <label>Speaker Ticks (Select the ones that apply to you)</label>
+                                                <hr />
+                                                @{
+                                                    foreach (TickType tt in db.TickTypes)
+                                                    {
+                                                        <b>@tt.Name</b>
+                                                        foreach (Tick t in tt.Ticks)
+                                                        {
+                                                            var ischecked = "";
+
+                                                            //see if member has this tick saved
+                                                            var found = Model.MemberTicks.Where(m => m.TickID == t.TickID);
+                                                            if (found.Count() > 0)
+                                                            {
+                                                                ischecked = "checked";
+                                                            }
+                                                            <div class="checkbox">
+                                                                <label>
+                                                                    <input class="tickCheck" type="checkbox" @ischecked value="@t.TickID" /> @t.Name
+                                                                </label>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 well">
+                                            <div class="form-group">
+                                                <label>Speaker Strengths</label>
+                                                <hr />
+                                                @{
+                                                    foreach (AssessType at in db.AssessTypes)
+                                                    {
+                                                        <div class="col-md-6">
+                                                            <b>@at.Name</b>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                        </div>
+                                                        <div class="clearfix"></div>
+                                                        foreach (Assess a in at.Assesses)
+                                                        {
+                                                            var strength_ischecked = "";
+                                                            var weakness_ischecked = "";
+                                                            var na_ischecked = "";
+
+                                                            //see if saved
+                                                            var found = Model.MemberAssesses.Where(m => m.AssessID == a.AssessID);
+                                                            if (found.Count() > 0)
+                                                            {
+                                                                strength_ischecked = "checked";
+                                                                weakness_ischecked = "checked";
+                                                                na_ischecked = "checked";
+                                                            }
+                                                            <div class="row well">
+                                                                <div class="col-md-4">@a.Name</div>
+                                                                <div class="col-md-8">
+                                                                    <label class="radio-inline ">
+                                                                        <input type="radio" name="@a.AssessID" class="radioass" value="1" @strength_ischecked />Strength
+                                                                    </label>
+                                                                    <label class="radio-inline ">
+                                                                        <input type="radio" name="@a.AssessID" class="radioass" value="2" @weakness_ischecked />Weakness
+                                                                    </label>
+                                                                    <label class="radio-inline ">
+                                                                        <input type="radio" name="@a.AssessID" class="radioass" value="3" @na_ischecked />N/A
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="clearfix">
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>My Most Memorable Public Speaking Experience Story:  </label>
+                                                <textarea name="MostMemorableStory" id="MostMemorableStory" class="form-control" rows="10">@Model.MostMemorableStory</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        @Html.EditorFor(m => m.CanShare)
+                                                        Can we share your story?
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="checkbox">
+                                                <label>
+                                                    @Html.EditorFor(m => m.Anonymous)
+                                                    Do you want to be anonymous?
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <label>Three Communication Goals</label>
+                                    <textarea id="ThreeCommunicationGoals" name="ThreeCommunicationGoals" rows="5" class="form-control">@Model.ThreeCommunicationGoals</textarea>
+                                    @Html.ValidationMessageFor(model => model.ThreeCommunicationGoals, "", new { @class = "text-danger" })
+                                    <br />
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="settings">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <div class="row">
+                            <div class="form-group">
+                                <input type="submit" value="Save Profile" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+
+                                                    }
+
+@section Scripts{
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+        $(".radioass").on('change',function(){
+            var selected = $(this);
+            var assID = selected[0].name;
+            var selectedValue = selected.val();
+            //save for member
+            $.post("/Assesses/SaveMemberAss", { AssessID: assID, SelectedValue: selectedValue }, function (data) {
+                //alert(data);
+            });
+
+        })
+
+        $(".tickCheck").change(function () {
+            var tickid = $(this).val();
+
+            if ($(this).is(':checked'))
+            {
+                //add to MemberTicks
+                $.post("/Ticks/AddToMember", { MemberID: @Model.MemberID, TickID: tickid }, function (data) {
+                    //alert(data);
+                });
+            }
+            else
+            {
+                //Delete from MemberTicks
+                $.post("/Ticks/RemoveFromMember", { MemberID: @Model.MemberID, TickID: tickid }, function (data) {
+                    //alert(data);
+                });
+            }
+
+        })
+
+        $("")
+        $("#calcAnx").click(function (event) {
+            event.preventDefault();
+            var stepOneTtl = 0;
+            var stepTwoTtl = 0;
+            var total = 0;
+
+            var stepOneNbrs = [1, 2, 3, 5, 9, 10, 13, 14, 19, 20, 21, 22, 23, 25, 27, 28, 29, 30, 31, 32, 33, 34];
+            var stepTwoNbrs = [4, 6, 7, 8, 11, 12, 15, 16, 17, 18, 24, 26];
+
+            for (var i = 1; i <= 34; i++) {
+                var v = $('input:radio[name=anx' + i + ']:checked').val();
+                if (v != undefined) {
+                    if(stepOneNbrs.indexOf(i) != -1){stepOneTtl += parseInt(v);}
+                } else {
+                    alert("Missing one or more questions");
+                    return;
+                }
+            }
+
+            for (var i = 1; i <= 34; i++) {
+                var v = $('input:radio[name=anx' + i + ']:checked').val();
+                if (v != undefined) {
+                    if(stepTwoNbrs.indexOf(i) != -1){stepTwoTtl += parseInt(v);}
+                } else {
+                    alert("Missing one or more questions");
+                    return;
+                }
+            }
+
+            var total = 72 - stepTwoTtl + stepOneTtl;
+
+            var scoreMessage = " Your anxiety score is " + total;
+
+            var extendedMessage;
+
+            if (total >= 34 && total <= 84) {
+                extendedMessage = "For people with scores between 34 and 84 on the PRPSA, very few public speaking situations would produce anxiety.";
+            }
+
+            if (total >= 85 && total <= 92) {
+                extendedMessage = "Scores between 85 and 92 indicate a moderately low level of anxiety about public speaking. While some public speaking situations would be likely to arouse anxiety in people with such scores, most situations would not be anxiety arousing.";
+            }
+
+            if (total >= 93 && total <= 110) {
+                extendedMessage = "Your score indicates moderate anxiety in most public speaking situations, but the level of anxiety is not likely to be so severe that the you won't be able to cope with it and eventually become a successful speaker.";
+            }
+
+            if (total >= 111 && total <= 119) {
+                extendedMessage = "Scores that range between 111 and 119 suggest a moderately high level of anxiety about public speaking. People with such scores will tend to avoid public speaking because it usually arouses a fairly high level of anxiety. While some public speaking situations may not cause too much of a problem, most will be problematic.";
+            }
+
+            if (total >= 120 && total <= 170) {
+                extendedMessage = "Scores between 120 and 170 indicate a very high level of anxiety about public speaking. People with scores in this range have very high anxiety in most, if not all, public speaking situations and are likely to go to considerable lengths to avoid them. It is unlikely that they can become successful public speakers unless they overcome or significantly reduce their anxiety.";
+            }
+
+            $("#AnxietyLevel").val(scoreMessage + ". " + extendedMessage);
+        });
+
+        $("#ilookup").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Members/InstitutionSearch",
+                    type: "POST", dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return { label: item.Name, value: item.Name };
+                        }));
+                    }
+                });
+            }
+        });
+    </script>
+}

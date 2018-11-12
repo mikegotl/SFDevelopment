@@ -1,0 +1,150 @@
+﻿@using WebApplicationMVC_EmailConf.Controllers
+
+@{
+    var fname = @MyHelpers.LoggedInMember.FirstName.Trim() + "'s";
+
+    <h3>Timeline for @fname Speech</h3>
+    <p>SpeechSage recommends that you follow the dates outlined on this plan to successfully complete this speech by your due date.  SpeechSage will support you by providing reminders of key dates.</p>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Stage 1: Organization</h3>
+        </div>
+        <div class="col-md-4">
+            <label>Start:</label>
+            <input type="text" class="form-control"
+                   data-provide="datepicker"
+                   data-date-format="mm/dd/yyyy"
+                   id="82"
+                   onchange="jsAutoSave(this.id, this.value);" value="" />
+        </div>
+        <div class="col-md-4">
+            <label>End:</label>
+            <input type="text" class="form-control"
+                   data-provide="datepicker"
+                   data-date-format="mm/dd/yyyy"
+                   id="8" @*qchoiceid*@
+                   onchange="jsAutoSave(this.id, this.value);" value="" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p>Compile your research for the speech, get clear on your purpose and select the most effective organizational strategy.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Stage 2: Creation</h3>
+        </div>
+        <div class="col-md-4">
+            <label>Start:</label>
+            <input type="text" class="form-control"
+                   data-provide="datepicker"
+                   data-date-format="mm/dd/yyyy"
+                   id="83"
+                   onchange="jsAutoSave(this.id, this.value);" value="" />
+        </div>
+        <div class="col-md-4">
+            <label>End:</label>
+            <input type="text" class="form-control"
+                   data-provide="datepicker"
+                   data-date-format="mm/dd/yyyy"
+                   id="9" @*qchoiceid*@
+                   onchange="jsAutoSave(this.id, this.value);" value="" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p>Fill out your speech following the Formula. Be sure share your resources and break down the content by engaging your audience. Transition between each part.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Stage 3: Delivery</h3>
+        </div>
+        <div class="col-md-4">
+            <label>Start:</label>
+            <input type="text" class="form-control"
+                   data-provide="datepicker"
+                   data-date-format="mm/dd/yyyy"
+                   id="10"
+                   onchange="jsAutoSave(this.id, this.value);" value="" />
+        </div>
+        <div class="col-md-4">
+            <label>End:</label>
+            <input type="text" class="form-control"
+                   data-provide="datepicker"
+                   data-date-format="mm/dd/yyyy"
+                   id="84" @*qchoiceid*@
+                   onchange="jsAutoSave(this.id, this.value);" value="" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p>Prepare for an effective delivery. This means reducing your full paper to cards (Formula + Key Words) and visuals (key words). Also, identify how to make your delivery goals happen live with your audience.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <label id="dd">Delivery Date:</label>
+        </div>
+        <div class="col-md-4">
+            <label>I Agree</label>
+            <input onclick="CheckSubStepCompletion(6);" type="checkbox" />
+        </div>
+    </div>
+}
+
+<script>
+    function setStageDates(answer) {
+        var startDate = new Date();
+        var deliveryDate = new Date(answer);
+
+        var stage1bdate = new Date();
+        var stage2bdate = new Date();
+        var stage3adate = new Date();
+
+        var stage1adate = new Date();//change to creation date of speech record
+        var stage2adate = new Date();
+        var stage3bdate = new Date();
+
+        //calcs for dates
+        stage3adate = addDays(deliveryDate, -2);
+        var dateDiff1 = ((deliveryDate - startDate) / 86400000);
+
+        stage2bdate = addDays(stage3adate, -1);
+        stage1bdate = addDays(startDate, Math.floor(dateDiff1) / 2);
+
+        stage1adate = new Date();
+        stage2adate = addDays(stage1bdate, 1);
+        stage3bdate = deliveryDate;
+
+        //format dates
+        stage1bdate = getFormattedDate(stage1bdate);
+        stage2bdate = getFormattedDate(stage2bdate);
+        stage3adate = getFormattedDate(stage3adate);
+
+        stage1adate = getFormattedDate(stage1adate);
+        stage2adate = getFormattedDate(stage2adate);
+        stage3bdate = getFormattedDate(stage3bdate);
+
+        $('#8').val(stage1bdate);
+        $('#9').val(stage2bdate);
+        $('#10').val(stage3adate);
+
+        $('#82').val(stage1adate);
+        $('#83').val(stage2adate);
+        $('#84').val(stage3bdate);
+
+        var dd = $("#dd");
+        dd[0].innerHTML = "Delivery Date: " + stage3bdate;
+
+        //save dates to db
+        jsAutoSave(6, 8, stage1bdate);
+        jsAutoSave(6, 9, stage2bdate);
+        jsAutoSave(6, 10, stage3adate);
+
+        jsAutoSave(6, 82, stage1adate);
+        jsAutoSave(6, 83, stage2adate);
+        jsAutoSave(6, 84, stage3bdate);
+    }
+</script>

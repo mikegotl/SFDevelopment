@@ -1,0 +1,91 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Speech
+@using WebApplicationMVC_EmailConf.Models
+@{SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+@{
+    ViewBag.Title = "Preview";
+}
+
+<h2>Preview</h2>
+
+<div>
+    <h4>Speech</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Topic)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Topic)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Research_Total)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Research_Total)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Entered_Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Entered_Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Updated_Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Updated_Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Filename)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Filename)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Citation_Styles.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Citation_Styles.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Member.UserID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Member.UserID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Organizational_Type.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Organizational_Type.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Source_Reference_Type.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Source_Reference_Type.Name)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Speech_ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

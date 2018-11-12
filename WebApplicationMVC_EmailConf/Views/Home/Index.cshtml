@@ -1,0 +1,84 @@
+﻿@using WebApplicationMVC_EmailConf.Models
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+
+    @{
+        List<Speech> speeches = ViewBag.speeches;
+        if (speeches != null)
+        {
+            if (speeches.Count > 0)
+            {
+                <div class="col-md-8 jumbotron">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <h2>
+                                My Speech Formula:<br><font color="#999999"><span style="font-size: 19.5px;">Which track would you like to pursue today?</span></font>
+                            </h2>
+                            <div class="col-md-6">
+                                <button class="btn btn-primary btn-block" onclick="window.location.href='/Speeches/Create'">
+                                    <b>Create a speech</b>
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-primary btn-block" onclick="window.location.href='/Speeches/'">
+                                    <b>Edit my speeches</b>
+                                </button>
+                            </div>
+                        </div>
+                        <br />
+                        @*<div class="row">
+                            <div class="col-md-4">
+                                <h4>My Delivery</h4>
+                            </div>
+                            <div class="col-md-8">
+                                <button class="btn btn-primary btn-block" onclick="window.location.href = '/CampSteps/CampView/'">Develop My Delivery Skills<br /><b>Speech Camp</b></button>
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+            }
+            else
+            {
+                //display only center button to create new speech
+                <div class="col-md-6 well">
+                    <h2>Let's Get Started <br /><small>Be brave. We'll help you every step along the way.</small></h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>My Speech Formula</b>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-primary" onclick="window.location.href='/Speeches/Create/'">
+                                <b>Create My First Speech</b>
+                            </button>
+                        </div>
+                    </div>
+                    @*<br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>My Delivery</b>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-primary" onclick="window.location.href='/CampSteps/CampView/'">Develop My Delivery Skills<br /><b>Speech Camp</b></button>
+                        </div>
+                    </div>*@
+                </div>
+            }
+
+        }
+        else
+        {
+
+            //display only center button to create new speech
+            <div class="col-md-6 col-md-push-3">
+                <h2>Getting Started</h2>
+                <p>
+                    Be Brave. We'll help you every step along the way.
+                </p>
+                <button class="btn btn-primary" onclick="window.location.href='/Speeches/Speech/'">Create My First Speech!</button>
+            </div>
+        }
+    }
+</div>

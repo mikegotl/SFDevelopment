@@ -1,0 +1,47 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.CredCheckerChoice>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Cred Question Choices</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table id="CredChoices" class="table display table-responsive table-striped table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Choice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CredCheckerQuestion.Question)
+            </th>
+            <th>Points</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Choice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CredCheckerQuestion.Question)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Points)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.CCCID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.CCCID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.CCCID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

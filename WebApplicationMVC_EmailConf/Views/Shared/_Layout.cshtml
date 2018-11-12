@@ -1,0 +1,115 @@
+﻿@using WebApplicationMVC_EmailConf.Controllers
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css">
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+</head>
+<body>
+    <div class="navbar navbar-default ">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button><br />
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        @*<a href="javascript:document.getElementById('logoutForm').submit()">
+                                <img src="~/Content/Images/logos/speechplan_logo_all_white_transparent.png" height="50" />
+                            </a>*@
+                        <img src="~/Content/Images/logos/SpeechFormula_3color_horiz.png" height="50" />
+                    </li>
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Profile", "Edit", "Members")</li>
+                    <li>@Html.ActionLink("Speeches", "Index", "Speeches")</li>
+                    <li>@Html.ActionLink("Store", "SpeechCatalogNoSubscriptionItems", "Catalog_Items")</li>
+                    @*<li>@Html.ActionLink("Delivery", "CampView", "CampSteps")</li>*@
+
+                    @if (MyHelpers.IsAdministrator)
+                    {
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>@Html.ActionLink("Student Speeches", "List", "Speeches")</li>
+                                <li>@Html.ActionLink("Student List", "Students", "Speeches")</li>
+                                <li>@Html.ActionLink("Steps", "Index", "Steps")</li>
+                                <li>@Html.ActionLink("Sub Steps", "Index", "Sub_Step")</li>
+                                <li>@Html.ActionLink("Questions", "Index", "qQuestions")</li>
+                                <li>@Html.ActionLink("Choices", "Index", "qChoices")</li>
+                                <li>@Html.ActionLink("Media Links", "Index", "Media")</li>
+                                <li>@Html.ActionLink("Ticks", "Index", "Ticks")</li>
+                                <li>@Html.ActionLink("Assessment Choices", "Index", "Assesses")</li>
+                                <li>@Html.ActionLink("Catalog Items", "Index", "Catalog_Items")</li>
+                            </ul>
+                        </li>
+                    }
+                    @{
+                        try
+                        {
+
+                            if (MyHelpers.LoggedInMember.MemberType.Name.Contains("Professor"))
+                            {
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Professor<span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Student Speeches", "List_Prof", "Speeches")</li>
+                                        <li>@Html.ActionLink("Student List", "Students_Prof", "Speeches")</li>
+                                    </ul>
+                                </li>
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                </ul>@Html.Partial("_LoginPartial")
+                <ul class="nav navbar-nav navbar-right">
+                    <li></li>
+                    <li>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - International Speaking Institute.</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js">
+    </script>
+    <script type="text/javascript">
+        $('[data-toggle="popover"]').popover();
+        //$(".display").DataTable();
+
+        $("#mySpeeches").DataTable(
+               {
+                   "order": [[4, "desc"]]
+               }
+               );
+        $("#studSpeeches").DataTable(
+            {
+                "order": [[6, "desc"]]
+            }
+            );
+
+        $("#CredChoices").DataTable();
+    </script>
+</body>
+</html>

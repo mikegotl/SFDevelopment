@@ -1,0 +1,76 @@
+﻿@model WebApplicationMVC_EmailConf.Models.qSub_Step_Question
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm())
+{
+    @*@Html.AntiForgeryToken()*@
+
+    <div class="form-horizontal">
+        <h4>qSub_Step_Question relationship</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @if (ViewBag.Scratch == true)
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.questionID, "questionID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("questionID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.questionID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.subStep_ID, "subStep_ID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("SubStep_ID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.subStep_ID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Active, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.Active)
+                        @Html.ValidationMessageFor(model => model.Active, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </div>
+        }
+        else {
+            <div class="form-group">
+                <h2>Sub Step: @ViewBag.SubStepName</h2>
+                <h4>Select question below to add to substep</h4>
+                <h5>If you do not see the question you want to add, click @Html.ActionLink("here", "Index", "qQuestions") to add to questions table</h5>
+                @Html.LabelFor(model => model.questionID, "Question to add to this sub step", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("questionID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.questionID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <input type="hidden" id="subStep_ID" name="subStepID" value="@ViewBag.subStepID" />
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

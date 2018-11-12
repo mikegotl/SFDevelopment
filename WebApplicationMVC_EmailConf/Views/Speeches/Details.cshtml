@@ -1,0 +1,294 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Speech
+@using WebApplicationMVC_EmailConf.Models
+@{SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+@{
+    ViewBag.Title = "Preview";
+    Layout = "~/Views/Shared/_Layout - Preview.cshtml";
+    List<SpeechMainPoint> mps = ViewBag.MainPoints;
+}
+<div class="container">
+    @*COVER PAGE*@
+    <div class="row"> <div class="col-md-6"> <span class="left">Running head: @ViewBag.RunningHead</span> </div> <div class="col-md-6 text-right"> <span class="text-right">1</span> </div> <br /> </div>
+
+    <div class="text-center col-md-6 col-md-push-3">
+        <div style="height:300px;"></div>
+        <p style="text-align:center">@ViewBag.Topic</p>
+        <p style="text-align:center">[Name of Institution]</p>
+        <p style="text-align:center">@ViewBag.StudentName</p>
+        <br />
+        <div style="height:300px;"></div>
+    </div>
+    <div class="clearfix"></div>
+    @*<hr class="page-break" />*@
+    <br class="page-break" style="page-break-before: always">
+    @*END - COVER PAGE*@
+    @*AUDIENCE ANALYSIS*@
+    <div class="row"> <div class="col-md-6"> <span class="left">@ViewBag.RunningHead</span> </div> <div class="col-md-6 text-right"> <span class="text-right">2</span> </div> <br /> </div>
+    <h2>Audience Analysis:</h2>
+    <h3>Primary</h3>
+    @if (ViewBag.AAPrimary != null)
+    {
+        <ul style="list-style-type:decimal">
+            @foreach (string c in ViewBag.AAPrimary)
+            {
+                <li>@c.ToString()</li>
+            }
+        </ul>
+    }
+    <h3>Secondary</h3>
+    @if (ViewBag.AASecondary != null)
+    {
+        <ul style="list-style-type:decimal">
+            @foreach (qAnswer a in ViewBag.AASecondary)
+            {
+                <li>
+                    @a.qQuestionChoice.qSub_Step_Question.qQuestion.Name
+                    @a.free_text
+                </li>
+            }
+        </ul>
+    }
+    @*END - AUDIENCE ANALYSIS*@
+    @*PURPOSE STATEMENT*@
+
+    <h2>Purpose Statement: @ViewBag.PurposeStatement</h2>
+    @*<hr class="page-break" />*@
+    <br class="page-break" style="page-break-before: always">
+    @*END - PURPOSE STATEMENT*@
+    @*SKELETON OUTLINE*@
+    <div class="row"> <div class="col-md-6"> <span class="left">@ViewBag.RunningHead</span> </div> <div class="col-md-6 text-right"> <span class="text-right">3</span> </div> <br /> </div>
+    <h2>Skeleton Outline:</h2>
+
+    <ol style="list-style-type:upper-roman">
+        @foreach (SpeechMainPoint smp in mps)
+        {
+            var mpStr = string.Empty;
+            <li style="list-style-type:upper-roman">
+                @if (smp.MainPointID == null || !string.IsNullOrEmpty(smp.MainPointFreeText))
+                {
+                    mpStr = smp.MainPointFreeText;
+                }
+                else
+                {
+                    mpStr = smp.MainPoint.Name;
+                }
+                @mpStr
+                <br>
+
+                @*Show mainpoints of strategies of speechsubpoints as subpoints*@
+                <ul style="list-style-type:upper-alpha">
+                    @foreach (SpeechSubPoint ssp in smp.SpeechSubPoints.OrderBy(o => o.Ordinal).ToList<SpeechSubPoint>())
+                    {
+                        <li>
+                            @ssp.SubPointFreeText
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+    </ol>
+
+    @*<hr class="page-break" />*@
+    <br class="page-break" style="page-break-before: always">
+    @*END - SKELETON OUTLINE*@
+    @*INTRODUCTION*@
+    <div class="row"> <div class="col-md-6"> <span class="left">@ViewBag.RunningHead</span> </div> <div class="col-md-6 text-right"> <span class="text-right">4</span> </div> <br /> </div>
+    <h2>Introduction:</h2>
+    <ul style="list-style-type:decimal">
+        <li>
+            <h2>Attention Grabber:</h2>
+            @ViewBag.AttnGrab
+        </li>
+        <li>
+            <h2>Thesis:</h2>
+            <ul style="list-style-type:lower-alpha">
+                <li>
+                    <h2>Relate (Probe)</h2>
+                    @ViewBag.ThesisRelatePathos
+                </li>
+                <li>
+                    <h2>State:</h2>
+                    @ViewBag.Ethos
+                </li>
+                <li>
+                    <h2>Support:</h2>
+                    @ViewBag.ThesisSupport
+                </li>
+            </ul>
+        </li>
+        <li>
+            <h2>Preview Main Points:</h2>
+            <p>
+                So today, I would like to explore @mps.Count questions.
+                @{
+                    int counter = 1;
+                    foreach (SpeechMainPoint mp in mps)
+                    {
+                        <span>
+                            Number @counter: @if (mp.MainPointID == null || !string.IsNullOrEmpty(mp.MainPointFreeText))
+                {
+                                @mp.MainPointFreeText
+                            }
+                            else
+                            {
+                                @mp.MainPoint.Name
+                            }.
+                        </span>
+                        counter += 1;
+                    }
+                }
+            </p>
+        </li>
+    </ul>
+    @*<hr class="page-break" />*@
+    <br class="page-break" style="page-break-before: always">
+    @*END - INTRODUCTION*@
+    @*BODY*@
+    <div class="row"> <div class="col-md-6"> <span class="left">@ViewBag.RunningHead</span> </div> <div class="col-md-6 text-right"> <span class="text-right">5</span> </div> <br /> </div>
+    @{
+        var stratName="";
+        try
+        {
+            stratName = Model.SpeechStrategies.Where(m => m.Best == true).First().Strategy.Name;
+
+        }
+        catch (Exception)
+        {
+        }
+    }
+    <h2>Body: (@stratName)</h2>
+    @{
+
+        <ul style="list-style-type:upper-roman">
+            @foreach (SpeechMainPoint mp in mps)
+            {
+                <li>
+                    @if (mp.MainPointID == null || !string.IsNullOrEmpty(mp.MainPointFreeText))
+                {
+                        @mp.MainPointFreeText
+                    }
+                    else
+                    {
+                        @mp.MainPoint.Name
+                    }<br>
+
+                    <ul style="list-style-type:upper-alpha">
+                        @foreach (SpeechSubPoint sp in mp.SpeechSubPoints.ToList<SpeechSubPoint>())
+                        {
+                            <li>
+                                @sp.SubPointFreeText
+
+                                @{
+                                    var savedSummaries = db.SpeechSubpointResearchSummaries.Where(m => m.SpeechSubPointsID == sp.SpeechSubPointsID).FirstOrDefault();
+                                }
+
+                                <ul style="list-style-type:decimal">
+                                    @if (savedSummaries != null)
+                                    {
+                                        <li>Source: @savedSummaries.SummaryText</li>
+                                    }
+                                    <li>
+                                        Connections:
+                                        <ul style="list-style-type:disc">
+                                            @{
+                                                List<SpeechSubpointConnection> connections = ViewBag.connections;
+                                                var cnnList = connections.Where(m => m.SpeechSubpointID == sp.SpeechSubPointsID);
+                                                foreach (var c in cnnList)
+                                                {
+                                                    <li>
+                                                        <b>@c.ConnectionType.Name</b>
+                                                        <p>"@c.Text"</p>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                                                if (!String.IsNullOrEmpty(sp.TransitionText))
+                                                {
+                                                    <p>Transition: @sp.TransitionText</p>
+                                                }
+                                                else
+                                                {
+                                                    if (sp.Transition != null)
+                                                    {
+                                                        <p>Transition: @sp.Transition.Name</p>
+                                                        }
+                                                    }
+                                                }
+                    </ul>
+                </li>
+                                                }
+        </ul>
+
+    }
+    @*<hr class="page-break" />*@
+    <br class="page-break" style="page-break-before: always">
+    @*END - BODY*@
+    @*CONCLUSION*@
+    <div class="row"> <div class="col-md-6"> <span class="left">@ViewBag.RunningHead</span> </div> <div class="col-md-6 text-right"> <span class="text-right">6</span> </div> <br /> </div>
+
+    <h2>Conclusion:</h2>
+    <p>Review Main Points: What were the @mps.Count points we covered today? (Reward audience/Show on PowerPoint)</p>
+    <ul style="list-style-type:decimal">
+        @{
+            foreach (SpeechMainPoint mp in mps)
+            {
+                <li>
+
+                    @if (mp.MainPointID == null || !string.IsNullOrEmpty(mp.MainPointFreeText))
+                    {
+                        @mp.MainPointFreeText
+                    }
+                    else
+                    {
+                        @mp.MainPoint.Name
+                    }
+                </li>
+            }
+        }
+    </ul>
+
+    <h2>Review Thesis (Return to each):</h2>
+    <ul style="list-style-type:lower-alpha">
+        <li>
+            <b>Support:</b>
+            <p>@ViewBag.Conc_Thesis_Support_Ans</p>
+        </li>
+        <li>
+            <b>State:</b>
+            <p>@ViewBag.Conc_Thesis_State_Ans</p>
+        </li>
+        <li>
+            <b>Relate:</b>
+            <p>@ViewBag.Conc_Thesis_Relate_Ans</p>
+        </li>
+    </ul>
+
+    <h2>Return to Attention Grabber:</h2>
+    @ViewBag.AttnGrab
+    @*<hr class="page-break" />*@
+    <br class="page-break" style="page-break-before: always">
+    @*END - CONCLUSION*@
+
+    @*REFERENCES*@
+    <div class="row"> <div class="col-md-6"> <span class="left">@ViewBag.RunningHead</span> </div> <div class="col-md-6 text-right"> <span class="text-right"></span>7</div> <br /> </div>
+
+    <div class="col-md-12 text-center">
+        <p style="align-self:center; text-align:center">References</p>
+    </div>
+
+    @foreach (var s in Model.Sources.Where(m => m.SourceTypeID == 2))
+    {
+        <p class="pI">@s.Who</p>
+
+    }
+    @*END - REFERENCES*@
+
+    <div style="position:fixed; top:5px; margin:auto;">
+        @Html.ActionLink("Export to Word", "PreviewDocument", null, new { @class = "btn btn-primary hidden-print" })
+        @Html.ActionLink("Return to Wizard", "Speech", new { id = Model.Speech_ID }, new { @class = "btn btn-primary hidden-print" })
+    </div>
+</div>

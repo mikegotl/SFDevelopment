@@ -1,0 +1,145 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.CampStep>
+@using WebApplicationMVC_EmailConf.Models
+@{SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+@{
+    ViewBag.Title = "CampView";
+}
+@Html.ActionLink("Camp Edits", "Index", "CampSubSteps")
+@{
+    <div>
+        <div class="col-lg-3" style="overflow-y:scroll; max-height:600px;">
+            <br />
+            <div class="row navbar-static-top">
+                <div id="tree"></div>
+            </div>
+        </div>
+        <div class="col-lg-9">
+            <div>
+                @{
+                    <div class="tab-content">
+                        @*container for all tabPanels*@
+                        @foreach (CampStep cs in Model)
+                        {
+                            foreach (CampSubStep css in cs.CampSubSteps.ToList<CampSubStep>())
+                            {
+                                string vCS_ID = "tabPanel" + cs.StepID.ToString() + "-" + css.SubStepID.ToString();
+                                string href = "#" + vCS_ID;
+                                string tabID = vCS_ID + "-tab";
+
+                                <div class="tabPanel" style="display:none" id="@vCS_ID">
+                                    @*Content for panel*@
+                                    <input type="button" value="Next" class="btn btn-info btn-sm hidden-print" onclick="Next('@vCS_ID');" />
+
+                                    @Html.Raw(css.SubStepContent)
+                                </div>
+
+                            }
+                            <div class="clearfix"></div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+    <script>
+        //Begin Treeview logic
+        var selectedNodeID;
+        var parentNodeID;
+        var dropdownIDFull;
+        var fromBtnClick;
+        //  Initialize Treeview
+        GetTreeFromDB();
+        function GetTreeFromDB() {
+
+            var url = "/CampSteps/GetTreeData";
+
+            $.post(url, null, function (data) {
+                var treeArray = [];
+
+                var nid = 0;
+                $.each(data, function (index, optionData) {
+                    var optionDataLen = optionData.length;
+
+                    var sName = optionData.Text;
+                    var Nodes = optionData.Nodes;
+                    var Idx = optionData.Idx;
+                    var nid = optionData.nid;
+
+                    var step = { text: sName, nodes: Nodes, idx: Idx, nid: nid };
+
+                    treeArray.push(step);
+                });
+                tdata = treeArray;
+                $('#tree').treeview({
+                    color: "#428bca",
+                    highlightSelected: true,
+                    data: tdata,
+                    showIcon: false,
+                    showCheckbox: true,
+                    uncheckedIcon: "glyphicon glyphicon-unchecked",
+                    checkedIcon: "glyphicon glyphicon-check",
+                    onNodeSelected: function (event, node) {
+                        nodeSelect(event, node);
+                    },
+                    onNodeUnselected: function (event, node) {
+                        nodeUNselect(event, node);
+                    }
+                });
+
+                //post initialization configurations of treeview
+                $('#tree').treeview('collapseAll', { silent: true });
+                $('#tree').treeview('expandNode', [0]);
+                $('#tree').treeview('selectNode', [1]);
+
+                //disableFutureNodes();
+                //CheckCompletedNodes();
+            });
+
+        }
+        function nodeSelect(event, node) {
+            $('#' + node.href + '').show(100);
+            selectedNodeID = node.nodeId;
+            parentNodeID = node.parentId;
+
+            dropdownIDFull = node.href;
+
+            if (parentNodeID == undefined && fromBtnClick != true) {
+                $('#tree').treeview('expandNode', [selectedNodeID]);
+                $('#tree').treeview('selectNode', [selectedNodeID + 1]);
+            }
+            fromBtnClick = false;
+        }
+        function nodeUNselect(event, node) {
+            $('#' + node.href + '').hide(200);
+        }
+
+        function Next(tFullID) {
+            var sn = getSelectedNode();
+            var snid = sn[0].nodeId;
+            var snhref = sn[0].href;
+            var snparentId = sn[0].parentId;
+            var currentNodeID = snid;
+            var parentNode = getParentNode(snid);
+            var originatingStepID = parentNode.idx;
+
+            //select next node
+            var nextNodeID = currentNodeID + 1;
+            var nextNode = getNode(nextNodeID);
+
+            fromBtnClick = true;
+        }
+
+        function getParentNode(nodeID) {
+            return $('#tree').treeview('getParent', nodeID);
+        }
+
+        function getSelectedNode() {
+            var s = $('#tree').treeview('getSelected');
+            return s;
+        }
+    </script>
+}

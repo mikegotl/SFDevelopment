@@ -1,0 +1,42 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Cart
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Cart</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StatusID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StatusID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Member.UserID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Member.UserID)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CartID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

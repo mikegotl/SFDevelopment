@@ -1,0 +1,42 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Cart_Items
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Cart_Items</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Catalog_Items.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Catalog_Items.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Cart.CartID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Cart.CartID)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Cart_ItemID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

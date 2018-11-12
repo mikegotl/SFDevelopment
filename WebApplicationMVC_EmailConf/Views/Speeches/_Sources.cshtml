@@ -1,0 +1,291 @@
+﻿@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+
+@{
+    SpeechSageDBEntities db = new SpeechSageDBEntities();
+    List<CredCheckerQuestion> topQuestions = ViewBag.TopQuestions;
+}
+
+<link href="~/Content/css/star-rating.min.css" rel="stylesheet" />
+<style>
+    .dropdown-submenu {
+        position: relative;
+    }
+
+        .dropdown-submenu > .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: -6px;
+            margin-left: -1px;
+            -webkit-border-radius: 0 6px 6px 6px;
+            -moz-border-radius: 0 6px 6px;
+            border-radius: 0 6px 6px 6px;
+        }
+
+        .dropdown-submenu:hover > .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-submenu > a:after {
+            display: block;
+            content: " ";
+            float: right;
+            width: 0;
+            height: 0;
+            border-color: transparent;
+            border-style: solid;
+            border-width: 5px 0 5px 5px;
+            border-left-color: #ccc;
+            margin-top: 5px;
+            margin-right: -10px;
+        }
+
+        .dropdown-submenu:hover > a:after {
+            border-left-color: #fff;
+        }
+
+        .dropdown-submenu.pull-left {
+            float: none;
+        }
+
+            .dropdown-submenu.pull-left > .dropdown-menu {
+                left: -100%;
+                margin-left: 10px;
+                -webkit-border-radius: 6px 0 6px 6px;
+                -moz-border-radius: 6px 0 6px 6px;
+                border-radius: 6px 0 6px 6px;
+            }
+</style>
+
+<br />
+
+@foreach (SourceType st in db.SourceTypes)
+{
+    string targetID;
+
+    if (st.Name.Contains("Personal"))
+    {
+        targetID = "#Personal";
+    }
+    else
+    {
+        targetID = "#Published";
+    }
+
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="@targetID">
+        + Add @st.Name
+    </button>
+}
+
+<div id="sourceList"></div>
+<div onload="renderSourceList();"></div>
+<!-- Modal Personal -->
+<div class="modal fade" id="Personal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Add Personal Source Reference</h4>
+            </div>
+            <div class="modal-body">
+
+                <label class="">Date:</label>
+                <input type="text" class="form-control" id="source_date" name="source_date" />
+
+                <label>Participants:</label>
+                <input type="text" class="form-control" id="participants" name="participants" />
+
+                <label>What do you want your audience to know about this experience? </label>
+                <textarea class="form-control" id="what" name="what" placeholder="Write the words you will say to your audience or bullet points you want to share"></textarea>
+                <br />
+                <input type="button" onclick="AddPersonalSource();" class="btn btn-default" value="Submit" data-dismiss="modal" />
+                <label id="message_personal"></label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Published-->
+<div class="modal fade" id="Published" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Add Published Source Reference</h4>
+            </div>
+            <div class="modal-body">
+                <span>
+                    <label>Citation: </label> <a href="http://www.bibme.org/" target="_blank"> Click here for help creating citation. </a>
+                </span>
+                <textarea class="form-control" id="citation" name="citation" rows="3" placeholder="Paste your citation here"></textarea>
+                <br />
+                <textarea class="form-control" id="published-what" name="what" rows="6" placeholder="Paste the information your will use in your speech"></textarea>
+                <br />
+
+                <h4>Credibility Checker</h4>
+
+                <input type="hidden" id="hiddenScore" name="hiddenScore" />
+                <label id="finalScore"></label>@*Numeric Score shows here*@
+                <input id="finalScoreInput" name="finalScoreInput" class="rating-loading" />@*Stars show up here*@
+
+                <ul class="list-group">
+
+                    @foreach (CredCheckerQuestion q in topQuestions)
+                    {
+                        <li class="list-group-item">
+                            @*DROPDOWN*@
+                            <div class="dropdown">
+                                <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-primary" data-target="#" href="/page.html">
+                                    @q.QuestionNumber) @q.Question <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                                    @*Direct Choices to this question*@
+                                    @foreach (CredCheckerChoice c in q.CredCheckerChoices)
+                                    {
+                                        <li><a href="#" class="choice" id="@c.CCCID" name="@c.Points">@c.Choice</a></li>
+                                    }
+
+                                    @*Add Child Question as SubMenu*@
+                                    @{
+                                        var subQuestions = db.CredCheckerQuestions.Where(m => m.ParentQID == q.CCQID).ToList<CredCheckerQuestion>();
+
+                                        foreach (CredCheckerQuestion sq in subQuestions)
+                                        {
+                                            <li class="dropdown-submenu">
+                                                <a href="#">@sq.Question</a>
+                                                <ul class="dropdown-menu">
+                                                    @foreach (CredCheckerChoice sqc in sq.CredCheckerChoices)
+                                                    {
+                                                        <li><a href="#" name="@sqc.Points" class="choice" id="@sqc.CCCID">@sqc.Choice</a></li>
+                                                    }
+                                                </ul>
+                                            </li>
+
+                                        }
+                                    }
+                                </ul>
+                                @*Answer Displays Here*@
+                                <label id="answerPH"></label>
+                                <input id="answerID" name="answerID" type="hidden" />
+                                <input id="answerPts" name="answerPts" class="answerPts" type="hidden" />
+                            </div>
+                        </li>
+                                        }
+                </ul>
+
+             
+
+                @*SUBMIT BUTTON*@
+                <input type="button" onclick="AddPublishedSource();" class="btn btn-default" value="Submit" data-dismiss="modal" />
+                <label id="message_published"></label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function AddPersonalSource() {
+        var url = "/Speeches/AddPersonalSource";
+        var when = $("#source_date").val();
+        var participants = $("#participants").val();
+        var what = $("#what").val();
+
+        $.post(url, { when: when, participants: participants, what: what }, function (data) {
+            //returned data from save
+            $("#message_personal")[0].innerHTML = data;
+            renderSourceList();
+
+            $("#source_date").val("");
+            $("#participants").val("");
+            $("#what").val("");
+            CheckSubStepCompletion(39);
+        });
+    }
+
+    function AddPublishedSource() {
+        var url = "/Speeches/AddPublishedSource";
+        var citation = $("#citation").val();
+        var what = $("#published-what").val();
+        var cScore = $("#hiddenScore").val();
+
+        //clean up
+        citation = escapeHTML(citation, true);
+
+        $.post(url, { citation: citation, what: what, cScore: cScore }, function (data) {
+            renderSourceList();
+
+            $("#citation").val("");
+            $("#published-what").val("");
+            CheckSubStepCompletion(39);
+        });
+    }
+
+    var ESC_MAP = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    };
+
+    function escapeHTML(s, forAttribute) {
+        return s.replace(forAttribute ? /[&<>'"]/g : /[&<>]/g, function (c) {
+            return ESC_MAP[c];
+        });
+    }
+
+    function renderSourceList() {
+        var sid = $("#Speech_ID").val();
+        $.post("/Sources/GetSourceList", { SpeechID: sid }, function (data) {
+            $("#sourceList")[0].innerHTML = data;
+        });
+    }
+
+    function DeleteSource(sourceID) {
+        $.post("/Sources/DeleteSource", { SourceID: sourceID }, function (data) {
+            renderSourceList();
+            CheckSubStepCompletion(39);
+        });
+    }
+
+    function SaveSource(SourceID, Who, When, What) {
+        $.post("/Sources/EditSource", { SourceID: SourceID, Who: Who, When: When, What: What }, function (data) {
+            renderSourceList();
+        });
+    }
+
+    function SetupEditModals(id) {
+        var when = $("#td_when_" + id)[0].innerText;
+        var who = $("#td_who_" + id)[0].innerText;
+        var what = $("#div_what_" + id)[0].innerText;
+        $("#hidden_edit_sourceID").val(id);
+
+        $("#edit_source_date").val(when);
+        $("#edit_participants").val(who);
+        $("#edit_what").val(what);
+
+        $("#edit_citation").val(who);
+        $("#edit_published-what").val(what);
+    }
+
+    function EditPersonalSource() {
+        var when = $("#edit_source_date").val();
+        var who = $("#edit_participants").val();
+        var what = $("#edit_what").val();
+        var sourceID = $("#hidden_edit_sourceID").val();
+        SaveSource(sourceID, who, when, what);
+    }
+
+    function EditPublishedSource() {
+        var who = $("#edit_citation").val();
+        var what = $("#edit_published-what").val();
+        var sourceID = $("#hidden_edit_sourceID").val();
+        SaveSource(sourceID, who, "", what);
+    }
+</script>

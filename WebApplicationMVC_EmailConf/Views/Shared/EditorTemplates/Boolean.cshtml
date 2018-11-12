@@ -1,0 +1,20 @@
+@using WebApplicationMVC_EmailConf.Utility
+@model Boolean?
+
+@{
+    var htmlAttributes = new RouteValueDictionary();
+    if (ViewBag.@class != null)
+    {
+        htmlAttributes.Add("class", ViewBag.@class);
+    }
+}
+
+<div class="form-group@(Html.ValidationErrorFor(m => m, " has-error"))">
+    <div class="controls">
+        @Html.CheckBox(
+            "",
+            Model.HasValue && Model.Value,
+            htmlAttributes)
+        @Html.ValidationMessageFor(m => m, null, new { @class = "help-block" })
+    </div>
+</div>

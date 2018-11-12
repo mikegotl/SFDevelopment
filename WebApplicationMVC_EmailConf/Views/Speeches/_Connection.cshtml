@@ -1,0 +1,150 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.SpeechMainPoint>
+
+@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+@{ SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+<h3>Outline</h3>
+@if (Model != null)
+{
+
+    //Get saved subpoint research source records
+    <ol style="list-style-type:upper-roman">
+        @foreach (SpeechMainPoint smp in Model)
+        {
+            <li style="list-style-type:upper-roman">
+                @if (smp.MainPointID == null || !string.IsNullOrEmpty(smp.MainPointFreeText))
+                {
+                    @smp.MainPointFreeText
+                }
+                else {
+                    @smp.MainPoint.Name
+                }<br>
+
+                <ul style="list-style-type:upper-alpha">
+                    @foreach (SpeechSubPoint ssp in smp.SpeechSubPoints.ToList<SpeechSubPoint>())
+                    {
+                        //Get saved summaries
+                        var savedSummaries = db.SpeechSubpointResearchSummaries.Where(m => m.SpeechSubPointsID == ssp.SpeechSubPointsID).FirstOrDefault();
+                        string summaryText = string.Empty;
+                        if (savedSummaries != null)
+                        {
+                            summaryText = savedSummaries.SummaryText;
+                        }
+                        <li style="">
+                            @ssp.SubPointFreeText
+                            <ul style="list-style-type:decimal">
+                                <li>
+                                    Source:
+                                    <ul style="list-style-type:upper-alpha">
+                                        <li style="list-style-type:none;">
+                                            <p>@summaryText</p>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Connection(s): (You may add more than one connection if necessary)
+                                    <ul style="list-style-type:disc">
+                                        @{
+                                            List<SpeechSubpointConnection> connections = ViewBag.connections;
+                                            var cnnList = connections.Where(m => m.SpeechSubpointID == ssp.SpeechSubPointsID);
+                                            foreach (var c in cnnList)
+                                            {
+                                                <li>
+                                                    @c.ConnectionType.Name
+                                                    <label id="lblTxt_@c.SpeechSubpointConnectionID" style="font-style:italic">@c.Text</label>
+                                                    <br />
+                                                    <button data-toggle="modal" data-target="#ModalEditConnection"
+                                                            onclick="EditConnectionSetupModal(@c.SpeechSubpointConnectionID, @c.ConnectionTypeID);">
+                                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                                    </button>
+                                                    @*DELETE BUTTON*@
+                                                    <button onclick="DeleteConnection(@c.SpeechSubpointConnectionID);">
+                                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                                    </button>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                    <button type="button" class="btn btn-default btn-block btn-sm" onclick="SetSelectedSSP(@ssp.SpeechSubPointsID);" data-toggle="modal" data-target="#ModalConnection">Add Connection</button>
+                                </li>
+                            </ul>
+                        </li>
+                                            }
+                </ul>
+            </li>
+                                            }
+    </ol>
+                                            }
+<!-- Modal -->
+<div class="modal fade" id="ModalConnection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Connection</h4>
+            </div>
+            <div class="modal-body">
+                Which type of connection will work best to make this point interesting and engage your audience?
+                <div class="row">
+                    <div class="col-md-11 col-md-push-1">
+                        @{
+                            var types = db.ConnectionTypes.ToList<ConnectionType>();
+                            foreach (ConnectionType t in types)
+                            {
+                                <label class="radio" style="font-weight:normal">
+                                    <input type="radio" id="@t.ConnectionTypeID" class="radio" name="connection_Radios" value="1"> @t.Name (@t.Description)
+                                </label>
+
+                            }
+                        }
+                    </div>
+                </div>
+                <textarea id="txtArea_Connection" class="form-control" rows="10" placeholder="Write the exact words that you will use to connect this content to your audience.  Be specific, use details.
+
+Probe:  How many of you have been in a situation where you were hearing your friend speak?  After they get done speaking, they ask a question or for advice and you can’t respond because you realize you didn’t listen carefully.
+
+Personal: Personally, after I choose this topic I was trying to analyze my own listening skills.  I can clearly recall recently when my friend Zhenya and I had a conversation.  She was trying to explain a serious money problem that could cause her to have to move back to Russia.  As she spoke, my mind wondered to other things.
+"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="AddConnection();" data-dismiss="modal">Add Connection</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalEditConnection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Connection</h4>
+            </div>
+            <div class="modal-body">
+                Which type of connection will work best to make this point interesting and engage your audience?
+                <div class="row">
+                    <div class="col-md-11 col-md-push-1">
+                        <input type="hidden" id="editConn_sspConnID" />
+                        @{
+                            var typess = db.ConnectionTypes.ToList<ConnectionType>();
+                            foreach (ConnectionType t in typess)
+                            {
+                                <label class="radio">
+                                    <input type="radio" id="r_@t.ConnectionTypeID" class="radio" name="connection_RadiosEdit" value="1"> @t.Name (@t.Description)
+                                </label>
+                            }
+                        }
+                    </div>
+                </div>
+                <textarea id="txtArea_ConnectionEdit" class="form-control" rows="5"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="SaveEditConnection();" data-dismiss="modal">Save Connection</button>
+            </div>
+        </div>
+    </div>
+</div>

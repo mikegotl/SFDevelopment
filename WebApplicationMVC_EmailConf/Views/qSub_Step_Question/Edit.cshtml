@@ -1,0 +1,54 @@
+﻿@model WebApplicationMVC_EmailConf.Models.qSub_Step_Question
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm())
+{
+    @*@Html.AntiForgeryToken()*@
+
+    <div class="form-horizontal">
+        <h4>qSub_Step_Question</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.subStepQuestionID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.questionID, "questionID", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("questionID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.questionID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.subStep_ID, "subStep_ID", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("subStep_ID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.subStep_ID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Active, "Active", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Active)
+                @Html.ValidationMessageFor(model => model.Active, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index", new { ss_id = Model.subStep_ID }, null) |
+    @Html.ActionLink("Go to choices for this question", "Index", "qQuestionChoices", new { ssq_id = Model.subStepQuestionID }, null)
+</div>

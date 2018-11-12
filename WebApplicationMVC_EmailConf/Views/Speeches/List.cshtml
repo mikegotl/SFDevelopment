@@ -1,0 +1,43 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.Speech>
+
+@{
+    ViewBag.Title = "List";
+}
+
+<h1>Student Speech List</h1>
+
+<table id="studSpeeches" class="table table-hover table-responsive table-bordered table-striped display">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Last</th>
+            <th>First</th>
+            <th>Email</th>
+            <th>@Html.DisplayNameFor(model => model.Topic)</th>
+            <th>Created</th>
+            <th>Last Updated</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Speech_ID)</td>
+                <td>@Html.DisplayFor(modelItem => item.Member.LastName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Member.FirstName)</td>
+                <td><a href="mailto:@item.Member.AspNetUser.Email">@item.Member.AspNetUser.Email</a></td>
+                <td><u>@Html.DisplayFor(modelItem => item.Topic)</u></td>
+                <td>@Html.DisplayFor(modelItem => item.Entered_Date)</td>
+                <td>@Html.DisplayFor(modelItem => item.Updated_Date)</td>
+                <td>
+                    <a href="#" onclick="window.location.href='/Speeches/Speech/@item.Speech_ID'">Edit</a> |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Speech_ID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+</script>

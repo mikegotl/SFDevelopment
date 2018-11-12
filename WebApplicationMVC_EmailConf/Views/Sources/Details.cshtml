@@ -1,0 +1,66 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Source
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Source</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.When)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.When)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Who)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Who)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.What)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.What)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Speech.Topic)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Speech.Topic)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SourceType.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SourceType.Name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SourceID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

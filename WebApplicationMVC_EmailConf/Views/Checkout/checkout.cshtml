@@ -1,0 +1,68 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Cart
+
+@{
+    ViewBag.Title = "checkout";
+}
+
+<h1>Checkout</h1>
+
+<div class="row">
+    <h3>You are about to purchase the following...</h3>
+    <div class="col-md-6 col-md-push-6">
+        <table class="table table-bordered table-striped table-responsive">
+            <thead>
+                <tr class="text-center">
+                    <th class="text-center">Item Name</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-center">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model.Cart_Items
+                                                 .GroupBy(m => m.Catalog_Items.Name)
+                                                 .Select(m => new
+                                                 {
+                                                     ItemName = m.Key,
+                                                     ItemQty = m.Count(),
+                                                     ItemSum = m.Sum(s => s.Catalog_Items.Price)
+                                                 }
+                                                 )
+
+                                                                                     )
+                {
+                    <tr>
+                        <td>
+                            @item.ItemName
+                        </td>
+                        <td class="text-center">
+                            @item.ItemQty
+                        </td>
+                        <td class="text-right">
+                            @String.Format("{0:c}", item.ItemSum)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td>Tax</td>
+                    <td class="text-right">$0.00</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Total:</td>
+                    <td class="text-right">
+                        @String.Format("{0:c}", Model.Cart_Items.Sum(m => m.Catalog_Items.Price))
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<div class="row text-right">
+    @*<a href="@Url.Action("Purchase","Checkout")" class="btn btn-info">Test-purchase (bypass)</a>*@
+    <a href="@Url.Action("Index","PayPal")" class="btn btn-info">Pay with Credit Card</a>
+</div>
+<div class="clearfix"></div>

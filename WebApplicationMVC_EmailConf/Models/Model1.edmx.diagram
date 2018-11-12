@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="363ce104da5346ab82b195b1193a6be2" Name="Diagram1" ZoomLevel="85">
+        <EntityTypeShape EntityType="SpeechSageDBModel.AspNetUser" Width="1.5" PointX="3.75" PointY="22.875" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.CampStep" Width="1.5" PointX="13.75" PointY="1.375" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.CampSubStep" Width="1.5" PointX="16" PointY="1.25" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Cart" Width="1.5" PointX="11.25" PointY="13" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Cart_Items" Width="1.5" PointX="13.5" PointY="10" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Catalog" Width="1.5" PointX="9" PointY="1.25" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Catalog_Items" Width="1.5" PointX="11.25" PointY="0.75" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.ConnectionType" Width="1.5" PointX="21.75" PointY="13.25" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Course" Width="1.5" PointX="3" PointY="16.875" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.CredChecker" Width="1.5" PointX="3" PointY="5.5" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.CredCheckerAnswer" Width="1.5" PointX="5.25" PointY="1.375" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.CredCheckerChoice" Width="1.5" PointX="3" PointY="1.25" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.CredCheckerQuestion" Width="1.5" PointX="0.75" PointY="1.375" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.File_Type" Width="1.5" PointX="0.75" PointY="8" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Gender" Width="1.5" PointX="3.75" PointY="20.5" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.HighestEducation" Width="1.5" PointX="3.75" PointY="10.25" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Institution" Width="1.5" PointX="0.75" PointY="16.875" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.MainPoint" Width="1.5" PointX="14.25" PointY="25" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Medium" Width="1.5" PointX="11.25" PointY="28" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.MemberMedia" Width="1.5" PointX="8.25" PointY="23.375" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Member" Width="1.5" PointX="6" PointY="13.625" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.MemberType" Width="1.5" PointX="3.75" PointY="12.875" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Purchase" Width="1.5" PointX="11.25" PointY="17" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.qAnswer" Width="1.5" PointX="13.5" PointY="21" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.qChoice" Width="1.5" PointX="9" PointY="40.5" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.qChoiceType" Width="1.5" PointX="9" PointY="43" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.qQuestionChoice" Width="1.5" PointX="11.25" PointY="39.875" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.qQuestion" Width="1.5" PointX="6.75" PointY="37.75" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.qSub_Step_Question" Width="1.5" PointX="9" PointY="37.375" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Slide" Width="1.5" PointX="10.5" PointY="33.125" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Source" Width="1.5" PointX="10.5" PointY="20.625" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.SourceType" Width="1.5" PointX="8.25" PointY="26.125" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Speech" Width="1.5" PointX="8.25" PointY="15.875" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.SpeechMainPoint" Width="1.5" PointX="16.5" PointY="16.875" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.SpeechStrategy" Width="1.5" PointX="13.5" PointY="13" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.SpeechSubpointConnection" Width="1.5" PointX="24" PointY="17" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.SpeechSubpointResearch" Width="1.5" PointX="21" PointY="18.875" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.SpeechSubpointResearchSummary" Width="1.5" PointX="21" PointY="16.25" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.SpeechSubPoint" Width="1.5" PointX="18.75" PointY="16.375" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Stage" Width="1.5" PointX="6.75" PointY="5" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Status" Width="1.5" PointX="11.25" PointY="25" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Step" Width="1.5" PointX="9" PointY="4.625" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Strategy" Width="1.5" PointX="11.25" PointY="8.75" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.StrategyCategory" Width="1.5" PointX="6.75" PointY="9.125" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.StrategySubCategory" Width="1.5" PointX="9" PointY="9" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Sub_Step" Width="1.5" PointX="11.25" PointY="4.5" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.SubStepStatu" Width="1.5" PointX="13.5" PointY="16.875" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Transition" Width="1.5" PointX="16.5" PointY="14.25" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.AspNetRole" Width="1.5" PointX="0.75" PointY="11" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.AspNetUserClaim" Width="1.5" PointX="0.75" PointY="14" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.AspNetUserLogin" Width="1.5" PointX="13.75" PointY="4" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.AspNetUserRole" Width="1.5" PointX="13.75" PointY="7" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Available_Answer" Width="1.5" PointX="15.75" PointY="4" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.sysdiagram" Width="1.5" PointX="15.75" PointY="7" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwAnswer" Width="1.5" PointX="15.75" PointY="10" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwAnswersFull" Width="1.5" PointX="17.75" PointY="4" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwCheckSubStep" Width="1.5" PointX="17.75" PointY="8" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwCheckSubStepsWithoutQuestion" Width="1.5" PointX="17.75" PointY="11" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwCompleteSpeechStep" Width="1.5" PointX="18.75" PointY="1" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwIncompleteSpeechStep" Width="1.5" PointX="18.75" PointY="14" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwMainPoints_SubPoints" Width="1.5" PointX="19.75" PointY="4" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwQuestionChoice" Width="1.5" PointX="19.75" PointY="10" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwQuestionChoicesFull" Width="1.5" PointX="0.75" PointY="21" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwQuestion" Width="1.5" PointX="20.75" PointY="1" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwSpeechMainPoint" Width="1.5" PointX="15.75" PointY="21" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwStepsDetail" Width="1.5" PointX="17.75" PointY="21" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwSubStepsWithQuestion" Width="1.5" PointX="21.75" PointY="4" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.vwUnansweredSubStep" Width="1.5" PointX="21.75" PointY="7" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Members_AspNetUsers" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_CampSubStep_CampStep" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Cart_Items_Cart" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Cart_Members" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Cart_Status" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Cart_Items_Catalog_Items" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Catalog_Items_Catalog" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Purchases_Catalog_Items" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechSubpointConnection_ConnectionType" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Course_Institution" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Course_Members" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Speeches_Course" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_CredCheckerAnswers_CredCheckerAnswers" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_CredCheckerAnswers_CredCheckerChoice" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_CredCheckerChoice_CredCheckerQuestion" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Members_Genders" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Members_HighestEducation" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Members_Institution" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_MainPoint_Strategy" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_MainPoint_Strategy1" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechMainPoints_MainPoint" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Media_Step" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_MemberMedia_Members" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Members_Members" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Members_MemberType" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Purchases_Members" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Speeches_Members" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_qAnswers_qQuestionChoices" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_qAnswers_Speeches" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_qQuestionChoices_qChoices" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_qQuestionChoices_qChoiceTypes" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_qQuestionChoices_qSub_Step_Question" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_qSub_Step_Question_qQuestions" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_qSub_Step_Question_Sub_Step" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Slides_Speeches" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Source_SourceTypes" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Source_Speeches" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechSubpointResearch_Source" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechMainPoints_Speeches" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechStrategies_Speeches" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SubStepStatus_Speeches" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechSubPoints_SpeechMainPoints" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechStrategies_Strategy" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechSubpointConnection_SpeechSubPoints" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechSubpointResearch_SpeechSubPoints" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechSubpointResearchSummary_SpeechSubPoints" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechSubPoints_Strategy1" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechSubPoints_Transition" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Step_Stages" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SubStepStatus_Status" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Sub_Step_Step" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Strategy_StrategySubCategory" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_StrategySubCategory_StrategyCategory" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SubStepStatus_Sub_Step" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.MemberTick" Width="1.5" PointX="26.875" PointY="15.375" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Tick" Width="1.5" PointX="24.625" PointY="9.875" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.TickType" Width="1.5" PointX="22.375" PointY="10" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_MemberTicks_Members" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_MemberTicks_Ticks" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Ticks_TickTypes" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Assess" Width="1.5" PointX="6" PointY="27.25" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.AssessType" Width="1.5" PointX="3.75" PointY="27.375" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.MemberAssess" Width="1.5" PointX="8.25" PointY="12.25" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_Assess_AssessType" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_MemberAssess_Assess" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_MemberAssess_Members" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.BillingAddress" Width="1.5" PointX="20.375" PointY="22.75" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.BillingCard" Width="1.5" PointX="22.375" PointY="22.75" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.Token" Width="1.5" PointX="23.375" PointY="0.75" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.PromoCode" Width="1.5" PointX="16.375" PointY="23.75" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.AnxietyQuestion" Width="1.5" PointX="0.75" PointY="24.75" />
+        <EntityTypeShape EntityType="SpeechSageDBModel.SpeechSlideSave" Width="1.5" PointX="10.5" PointY="46.375" />
+        <AssociationConnector Association="SpeechSageDBModel.FK_SpeechSlideSaves_Speeches" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

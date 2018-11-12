@@ -1,0 +1,42 @@
+﻿@model WebApplicationMVC_EmailConf.Models.CredCheckerQuestion
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CredCheckerQuestion</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Question)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Question)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.QuestionNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.QuestionNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ParentQID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ParentQID)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.CCQID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

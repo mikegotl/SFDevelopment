@@ -1,0 +1,756 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Speech
+@using WebApplicationMVC_EmailConf.Models
+@using WebApplicationMVC_EmailConf.Controllers
+@{SpeechSageDBEntities db = new SpeechSageDBEntities();}
+@{List<Step> steps = steps = db.Steps.OrderBy(o => o.Stage_ID).ToList<Step>();}
+
+@{
+    @Html.HiddenFor(m => m.Speech_ID)
+    <div class="row hidden-print">
+        <div class="col-md-2">
+            <a class="btn btn-primary" role="button" data-toggle="collapse" href="#Dashboard" aria-expanded="false" aria-controls="Dashboard">
+                Speech Dashboard
+            </a>
+        </div>
+        <div id="Dashboard" class="well-sm col-md-8 collapse">
+            <div class="row">
+                <h4>Professor Notes:</h4>
+                @{
+                    var _notes = "";
+                    if (Model.Notes != null)
+                    {
+                        _notes = Model.Notes;
+                    }
+                }
+                @if (MyHelpers.LoggedInMember.MemberType.Name.Contains("Professor"))
+                {
+                    var topic = Model.Topic.ToString();
+                    <textarea id="profNotes" class="form-control" onchange="jsAutoSaveSpeechNotes($(this).val(), @Model.Speech_ID, '@topic');">@_notes</textarea>
+                }
+                else
+                {
+                    <p>@_notes</p>
+                }
+                <br />
+            </div>
+            <div class="row">
+                <div class="panel panel-default col-md-3">
+                    <div class="panel-heading text-center">% Complete</div>
+                    <div class="panel-body text-center">
+                        <span id="PercComplete"></span>
+                    </div>
+                </div>
+                <div class="panel panel-default col-md-3">
+                    <div class="panel-heading text-center">Cred Score Avg</div>
+                    <div class="panel-body text-center">
+                        <span id="CredScoreAvg"></span>
+                    </div>
+                </div>
+                <div class="panel panel-default col-md-3">
+                    <div class="panel-heading text-center">Countdown</div>
+                    <div class="panel-body text-center">
+                        <span id="CountDown"></span>
+                    </div>
+                </div>
+                <div class="panel panel-default col-md-3">
+                    <div class="panel-heading text-center">Delivery Date</div>
+                    <div class="panel-body text-center">
+                        <span id="DelDate"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 hidden-print" style="overflow-y:scroll; max-height:600px;">
+            <br />
+            <div class="row navbar-static-top">
+                <div id="tree"></div>
+                <div id="selectable-output"></div>
+            </div>
+        </div>
+        <div class="col-lg-9">
+            <div>
+                @{
+                    int sCounter = 1;
+                <div class="tab-content">
+                    @foreach (Step s in steps.Where(m => m.Active == true))
+                        {
+                            int ssCounter = 1;
+                            foreach (Sub_Step ss in s.Sub_Step.Where(m => m.Active == true).OrderBy(o => o.Order_By).ToList<Sub_Step>())
+                            {
+                                string vSS_ID = "dropdown" + sCounter.ToString() + "-" + ssCounter.ToString();
+                                string href = "#" + vSS_ID;
+                                string tabID = vSS_ID + "-tab";
+
+                    <div class="tabPanel" style="display:none" id="@vSS_ID">
+                        <h2>@s.Name</h2>
+                        @{
+                                        string btn1ID = "showAlertAgain1_" + s.Step_ID + "-" + ss.SubStep_ID;
+                                        string btn2ID = "showAlertAgain2_" + s.Step_ID + "-" + ss.SubStep_ID;
+                                        string alertDiv1 = "alert1_" + s.Step_ID + "-" + ss.SubStep_ID;
+                                        string alertDiv2 = "alert2_" + s.Step_ID + "-" + ss.SubStep_ID;
+
+                                        //youtube url
+                                        var ytSrc = "";
+                                        if (s.Media.FirstOrDefault() != null)
+                                        {
+                                            ytSrc = s.Media.FirstOrDefault().VideoUrl ?? "";
+                                        }
+                        }
+                        <input id="hidden_yt_@ss.SubStep_ID" type="hidden" value="@ytSrc" />
+                        <button id="@btn1ID" class="btn btn-info btn-sm hidden-print"
+                                onclick="$('#@alertDiv1').show('1000'); $(this).hide('1000'); showIframe(@ss.SubStep_ID);">
+                            + Guidance
+                        </button>
+                        <div id="@alertDiv1" class="alert alert-info" style="display:none"
+                             onclick="$('#@alertDiv1').hide('1000'); $('#@btn1ID').show('1000');" role="alert">
+                            <button type="button" class="close" onclick="$('#@alertDiv1').hide('1000'); $('#@btn1ID').show('1000');" aria-label="Close">
+                                <span aria-hidden="true">Close</span>
+                            </button>
+                            <div class="row">
+                                <div class="left col-md-4">
+                                    <iframe id="iframe_yt_@ss.SubStep_ID" width="100%" frameborder="0" allowfullscreen></iframe>
+                                </div>
+
+                                @s.Description
+                            </div>
+                        </div>
+
+                        <div class="well">
+                            <div class="text-right">
+                                @if (vSS_ID != "dropdown1-1")
+                                            {
+                                <input type="button" value="Prev" class="btn btn-primary btn-sm hidden-print" onclick="Previous('@vSS_ID');" />
+                                            }
+                                @if (vSS_ID != "dropdown8-1")
+                                            {
+                                <input type="button" value="Next" class="btn btn-info btn-sm hidden-print" onclick="Next('@vSS_ID');" />
+                                            }
+                            </div>
+                            <h3>@ss.Name</h3>
+
+                            <button id="@btn2ID" class="btn btn-info btn-sm hidden-print" onclick="$('#@alertDiv2').show('1000'); $(this).hide('1000');">+ Guidance</button>
+                            <div id="@alertDiv2" class="alert alert-info" style="display:none;opacity:.85" onclick="$('#@alertDiv2').hide('1000'); $('#@btn2ID').show('1000');" role="alert">
+                                <button type="button" class="close" onclick="$('#@alertDiv2').hide('1000'); $('#@btn2ID').show('1000');" aria-label="Close"><span aria-hidden="true">Close</span></button>
+                                @ss.Description
+                            </div>
+                            <br />
+
+                            @*SPINNER*@
+                            <div class="loading" style="display:none">Loading&#8230;</div>
+
+                            @if (ss.SubStep_ID == 6) { Html.RenderPartial("_Timeline"); }
+                            @if (ss.SubStep_ID == 39) { Html.RenderPartial("_Sources"); }
+                            @if (ss.SubStep_ID == 16)
+                                        {<div id="Graph"></div>}
+                            @if (ss.SubStep_ID == 17)
+                                        {
+                                            ViewData["SpeechID"] = Model.Speech_ID;
+                                            Html.RenderPartial("_Strats", ViewData["SpeechID"]);
+
+                                        }
+
+                            @if (ss.SubStep_ID == 18)
+                                        {<div id="BestStrategy"></div>}
+                            @if (ss.SubStep_ID == 20)
+                                        {<div id="Skeleton_MP"></div>}
+                            @if (ss.SubStep_ID == 19)
+                                        {<div id="Skeleton_SP"></div>}
+                            @if (ss.SubStep_ID == 21)
+                                        {<div id="Research"></div>}
+                            @if (ss.SubStep_ID == 22)
+                                        {<div id="Connection"></div>}
+                            @if (ss.SubStep_ID == 23)
+                                        {<div id="Transition"></div>}
+                            @if (ss.SubStep_ID == 32)
+                                        {<div id="Slides"></div>}
+                            @if (ss.SubStep_ID == 42)
+                                        {<div id="Cards"></div>}
+
+                            @*here is where dynamic input controls will be for sub-step question(s) and available answers*@
+                            @{
+                                            int[] ss_exception_list = { 6, 39, 16, 17, 20, 19, 21, 22, 23, 32 };
+
+                                            List<vwQuestion>
+                                                questions = db.vwQuestions.Where(m => m.SubStep_ID == ss.SubStep_ID && !ss_exception_list.Contains(m.SubStep_ID)).ToList<vwQuestion>
+                                                    ();
+
+                                            foreach (vwQuestion q in questions)
+                                            {
+                                                List<vwQuestionChoice>
+                                                    qChoices = db.vwQuestionChoices.Where(m => m.subStepQuestionID == q.subStepQuestionID).ToList<vwQuestionChoice>
+                                                        ();
+
+                            <h4>@q.Name</h4>
+
+                                                if (q.Name.Contains("Support:"))
+                                                {
+
+                                                    var quoteHelpID = "quoteHelp" + q.SubStep_ID;
+                                                    var targQH = "#" + quoteHelpID;
+
+                            <a onclick='$("@targQH").show(500)'>Need help finding a quote?</a>
+                            <div id="@quoteHelpID" style="display:none">
+                                <h4>
+                                    These popular quote website should help you find some key words to support your thesis.
+                                </h4>
+                                <p>
+                                    World of Quotes: <a href="http://www.worldofquotes.com" target="_blank">
+                                        Famous Quotes, Quotations, and Sayings at WorldOfQuotes.
+                                    </a>
+                                </p>
+                                <p>
+                                    Brainy Quote:  <a href="http://www.brainyquote.com/quotes/keywords/websites.html" target="_blank">http://www.brainyquote.com/quotes/keywords/websites.html</a> and
+                                </p>
+                                <p>
+                                    Ref Seek:  <a href="http://www.refseek.com/directory/quotations.html" target="_blank">http://www.refseek.com/directory/quotations.html</a>
+                                </p>
+                            </div>
+                                                }
+
+                                                foreach (vwQuestionChoice c in qChoices)
+                                                {
+                                                    //check for existing stored value
+                                                    int sID = Model.Speech_ID;
+
+                                                    qAnswer existingAns = db.qAnswers.Where(m => m.speechID == sID && m.questionChoiceID == c.questionChoiceID).FirstOrDefault();
+
+                                                    string answerString = string.Empty;
+                                                    string yesChkd = "";
+                                                    string noChkd = "";
+                                                    string chkd = "";
+
+                                                    if (existingAns != null)
+                                                    {
+
+                                                        string existingAnsFreeText = existingAns.free_text;
+
+                                                        if (existingAnsFreeText == "1" || existingAnsFreeText == "0")
+                                                        {
+                                                            if (existingAnsFreeText == "1")
+                                                            {
+                                                                yesChkd = "checked";
+                                                                noChkd = "";
+                                                            }
+                                                            else
+                                                            {
+                                                                noChkd = "checked";
+                                                                yesChkd = "";
+                                                            }
+                                                        }
+                                                        if (existingAnsFreeText == "true" || existingAnsFreeText == "false")
+                                                        {
+                                                            if (existingAnsFreeText == "true")
+                                                            {
+                                                                chkd = "checked";
+                                                            }
+                                                            else
+                                                            {
+                                                                chkd = "";
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            answerString = existingAnsFreeText;
+                                                        }
+                                                    }
+
+                                                    //render controls
+                                                    switch (c.Choice_Type)
+                                                    {
+                                                        case "FreeText":
+                            <input type="text" class="form-control" id="@c.questionChoiceID"
+                                   onchange="jsAutoSave(@ss.SubStep_ID, this.id, this.value);" value="@answerString" />
+                                                            break;
+                                                        case "Slider":
+                                                            if (answerString == "") { answerString = "1"; }
+
+                            <span id="span_@c.questionChoiceID">@answerString</span>
+                            <span>
+                                Low <input class="slider1" id="@c.questionChoiceID" data-slider-id='@c.questionChoiceID' type="text"
+                                           data-slider-min="1" data-slider-max="3" data-slider-step="1" data-slider-value="@answerString" /> High
+                            </span>
+                                                            break;
+                                                        case "DateTimeSelector":
+                            <div class='input-group' style="width:200px;" id='datetimepicker3'>
+                                <input type='text' class="form-control" id="@c.questionChoiceID"
+                                       onblur="jsAutoSave(@ss.SubStep_ID, this.id, this.value);" onchange="jsAutoSave(@ss.SubStep_ID, this.id, this.value);" value="@answerString" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-time"></span> MM:SS
+                                </span>
+                            </div>
+                                                            break;
+                                                        case "FreeTextArea":
+
+                                                            if (ss.SubStep_ID == 13)
+                                                            {
+                                                                //Purpose Statement
+                            <textarea class="form-control" id="@c.questionChoiceID" style="min-width: 50%" onkeyup="jsAutoSave(@ss.SubStep_ID, this.id, this.value);" onchange="jsAutoSave(@ss.SubStep_ID, this.id, this.value);" placeholder="Create a statement which inspires the audience about how they will benefit from your words.  This statement should include a clear active verb and contain only one idea, no conjunctions. ">@answerString</textarea>
+                                                        <!-- Button trigger modal -->
+                            <br />
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#actionVerbsModal">
+                                Action Verbs
+                            </button>
+
+                                                        <!-- Modal -->
+                            <div class="modal fade" id="actionVerbsModal" tabindex="-1" role="dialog" aria-labelledby="actionVerbsModal">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="myModalLabel">Action Verbs (Click the action verb that best defines your purpose)</h4>
+                                        </div>
+                                        <div id="actionVerbs" class="modal-body">
+                                            <ul class="list-inline">
+                                                <li>Abandon</li>
+                                                <li>Abolish</li>
+                                                <li>Accept</li>
+                                                <li>Account</li>
+                                                <li>Achieve</li>
+                                                <li>Acquire</li>
+                                                <li>Act</li>
+                                                <li>Activate</li>
+                                                <li>Adapt</li>
+                                                <li>Add</li>
+                                                <li>Address</li>
+                                                <li>Adjust</li>
+                                                <li>Administer</li>
+                                                <li>Admit</li>
+                                                <li>Advance</li>
+                                                <li>Affect</li>
+                                                <li>Agree</li>
+                                                <li>Aid</li>
+                                                <li>Analyze</li>
+                                                <li>Answer</li>
+                                                <li>Anticipate</li>
+                                                <li>Appreciate</li>
+                                                <li>Approach</li>
+                                                <li>Arrange</li>
+                                                <li>Assemble</li>
+                                                <li>Assess</li>
+                                                <li>Attain</li>
+                                                <li>Begin</li>
+                                                <li>Believe</li>
+                                                <li>Break</li>
+                                                <li>Budget</li>
+                                                <li>Build</li>
+                                                <li>Calculate</li>
+                                                <li>Calibrate</li>
+                                                <li>Capture</li>
+                                                <li>Care</li>
+                                                <li>Catch</li>
+                                                <li>Challenge</li>
+                                                <li>Chart</li>
+                                                <li>Choose</li>
+                                                <li>Clarify</li>
+                                                <li>Classify</li>
+                                                <li>Coach</li>
+                                                <li>Collect</li>
+                                                <li>Combine</li>
+                                                <li>Command</li>
+                                                <li>Communicate</li>
+                                                <li>Compare</li>
+                                                <li>Compile</li>
+                                                <li>Complete</li>
+                                                <li>Complicate</li>
+                                                <li>Compose</li>
+                                                <li>Compute</li>
+                                                <li>Conceive</li>
+                                                <li>Concentrate</li>
+                                                <li>Conclude</li>
+                                                <li>Concur</li>
+                                                <li>Conduct</li>
+                                                <li>Confine</li>
+                                                <li>Confront</li>
+                                                <li>Conjecture</li>
+                                                <li>Connect</li>
+                                                <li>Conserve</li>
+                                                <li>Consider</li>
+                                                <li>Consolidate</li>
+                                                <li>Constitute</li>
+                                                <li>Constrain</li>
+                                                <li>Construct</li>
+                                                <li>Control</li>
+                                                <li>Coordinate</li>
+                                                <li>Counsel</li>
+                                                <li>Create</li>
+                                                <li>Critique</li>
+                                                <li>Deal</li>
+                                                <li>Decide</li>
+                                                <li>Declare</li>
+                                                <li>Decode</li>
+                                                <li>Decrease</li>
+                                                <li>Deduce</li>
+                                                <li>Deduct</li>
+                                                <li>Defend</li>
+                                                <li>Define</li>
+                                                <li>Delegate</li>
+                                                <li>Delineate</li>
+                                                <li>Deliver</li>
+                                                <li>Demonstrate</li>
+                                                <li>Deny</li>
+                                                <li>Depict</li>
+                                                <li>Deploy</li>
+                                                <li>Deposit</li>
+                                                <li>Derive</li>
+                                                <li>Describe</li>
+                                                <li>Design</li>
+                                                <li>Destroy</li>
+                                                <li>Detect</li>
+                                                <li>Develop</li>
+                                                <li>Deviate</li>
+                                                <li>Devise</li>
+                                                <li>Diagnose</li>
+                                                <li>Dictate</li>
+                                                <li>Differ</li>
+                                                <li>Differentiate</li>
+                                                <li>Diffuse</li>
+                                                <li>Direct</li>
+                                                <li>Discard</li>
+                                                <li>Discover</li>
+                                                <li>Discuss</li>
+                                                <li>Dismiss</li>
+                                                <li>Display</li>
+                                                <li>Distribute</li>
+                                                <li>Edit</li>
+                                                <li>Eliminate</li>
+                                                <li>Emphasize</li>
+                                                <li>Employ</li>
+                                                <li>Enable</li>
+                                                <li>Encapsulate</li>
+                                                <li>Encompass</li>
+                                                <li>End</li>
+                                                <li>Endure</li>
+                                                <li>Engage</li>
+                                                <li>Enhance</li>
+                                                <li>Enter</li>
+                                                <li>Entertain</li>
+                                                <li>Equip</li>
+                                                <li>Establish</li>
+                                                <li>Estimate</li>
+                                                <li>Evaluate</li>
+                                                <li>Evaporate</li>
+                                                <li>Evidence</li>
+                                                <li>Evolve</li>
+                                                <li>Exacerbate</li>
+                                                <li>Examine</li>
+                                                <li>Except</li>
+                                                <li>Execute</li>
+                                                <li>Expand</li>
+                                                <li>Expedite</li>
+                                                <li>Experiment</li>
+                                                <li>Fabricate</li>
+                                                <li>Facilitate</li>
+                                                <li>Fail</li>
+                                                <li>Feature</li>
+                                                <li>Finalize</li>
+                                                <li>Find</li>
+                                                <li>Finish</li>
+                                                <li>Fit</li>
+                                                <li>Flout</li>
+                                                <li>Flow</li>
+                                                <li>Focus</li>
+                                                <li>Follow</li>
+                                                <li>Forecast</li>
+                                                <li>Form</li>
+                                                <li>Formulate</li>
+                                                <li>Fracture</li>
+                                                <li>Fulfill</li>
+                                                <li>Furnish</li>
+                                                <li>Gain</li>
+                                                <li>Galvanize</li>
+                                                <li>Gather</li>
+                                                <li>Generalize</li>
+                                                <li>Generate</li>
+                                                <li>Give</li>
+                                                <li>Grasp</li>
+                                                <li>Group</li>
+                                                <li>Grow</li>
+                                                <li>Guide</li>
+                                                <li>Hamper</li>
+                                                <li>Handle</li>
+                                                <li>Help</li>
+                                                <li>Hypothesize</li>
+                                                <li>Identify</li>
+                                                <li>Ignore</li>
+                                                <li>Illustrate</li>
+                                                <li>Imagine</li>
+                                                <li>Imitate</li>
+                                                <li>Immobilize</li>
+                                                <li>Impair</li>
+                                                <li>Implement</li>
+                                                <li>Implicate</li>
+                                                <li>Imply</li>
+                                                <li>Incorporate</li>
+                                                <li>Increase</li>
+                                                <li>Indicate</li>
+                                                <li>Induce</li>
+                                                <li>Infer</li>
+                                                <li>Influence</li>
+                                                <li>Inform</li>
+                                                <li>Initialize</li>
+                                                <li>Initiate</li>
+                                                <li>Input</li>
+                                                <li>Inquire</li>
+                                                <li>Inspire</li>
+                                                <li>Instigate</li>
+                                                <li>Integrate</li>
+                                                <li>Interact</li>
+                                                <li>Interpret</li>
+                                                <li>Intervene</li>
+                                                <li>Introduce</li>
+                                                <li>Invert</li>
+                                                <li>Investigate</li>
+                                                <li>Justify</li>
+                                                <li>Laugh</li>
+                                                <li>Lead</li>
+                                                <li>Limit</li>
+                                                <li>Localize</li>
+                                                <li>Locate</li>
+                                                <li>Loosen</li>
+                                                <li>Lose</li>
+                                                <li>Maintain</li>
+                                                <li>Make</li>
+                                                <li>Manifest</li>
+                                                <li>Manipulate</li>
+                                                <li>Maximize</li>
+                                                <li>Measure</li>
+                                                <li>Mediate</li>
+                                                <li>Meet</li>
+                                                <li>Mentor</li>
+                                                <li>Merge</li>
+                                                <li>Minimize</li>
+                                                <li>Mobilize</li>
+                                                <li>Model</li>
+                                                <li>Modernize</li>
+                                                <li>Modify</li>
+                                                <li>Monitor</li>
+                                                <li>Motivate</li>
+                                                <li>Need</li>
+                                                <li>Negate</li>
+                                                <li>Negotiate</li>
+                                                <li>Note</li>
+                                                <li>Nullify</li>
+                                                <li>Offer</li>
+                                                <li>Operate</li>
+                                                <li>Order</li>
+                                                <li>Organize</li>
+                                                <li>Perform</li>
+                                                <li>Permeate</li>
+                                                <li>Persist</li>
+                                                <li>Persuade</li>
+                                                <li>Pick</li>
+                                                <li>Pile</li>
+                                                <li>Pioneer</li>
+                                                <li>Place</li>
+                                                <li>Play</li>
+                                                <li>Plot</li>
+                                                <li>Point Out</li>
+                                                <li>Possess</li>
+                                                <li>Precipitate</li>
+                                                <li>Predict</li>
+                                                <li>Prefer</li>
+                                                <li>Prepare</li>
+                                                <li>Present</li>
+                                                <li>Preside</li>
+                                                <li>Probe</li>
+                                                <li>Proceed</li>
+                                                <li>Process</li>
+                                                <li>Produce</li>
+                                                <li>Profit</li>
+                                                <li>Program</li>
+                                                <li>Promise</li>
+                                                <li>Promote</li>
+                                                <li>Propose</li>
+                                                <li>Protest</li>
+                                                <li>Prove</li>
+                                                <li>Purify</li>
+                                                <li>Pursue</li>
+                                                <li>Qualify</li>
+                                                <li>Question</li>
+                                                <li>Reach</li>
+                                                <li>Reciprocate</li>
+                                                <li>Recognize</li>
+                                                <li>Recommend</li>
+                                                <li>Reconcile</li>
+                                                <li>Reconstruct</li>
+                                                <li>Record</li>
+                                                <li>Redeem</li>
+                                                <li>Redefine</li>
+                                                <li>Reduce</li>
+                                                <li>Reference</li>
+                                                <li>Refine</li>
+                                                <li>Reflect</li>
+                                                <li>Refute</li>
+                                                <li>Regain</li>
+                                                <li>Regard</li>
+                                                <li>Regulate</li>
+                                                <li>Reject</li>
+                                                <li>Relate</li>
+                                                <li>Relax</li>
+                                                <li>Release</li>
+                                                <li>Rely</li>
+                                                <li>Remediate</li>
+                                                <li>Remove</li>
+                                                <li>Render</li>
+                                                <li>Repair</li>
+                                                <li>Replace</li>
+                                                <li>Report</li>
+                                                <li>Represent</li>
+                                                <li>Reproduce</li>
+                                                <li>Require</li>
+                                                <li>Research</li>
+                                                <li>Respond</li>
+                                                <li>Retrieve</li>
+                                                <li>Reveal</li>
+                                                <li>Review</li>
+                                                <li>Sample</li>
+                                                <li>Satisfy</li>
+                                                <li>Schedule</li>
+                                                <li>Search</li>
+                                                <li>Seek</li>
+                                                <li>Select</li>
+                                                <li>Send</li>
+                                                <li>Separate</li>
+                                                <li>Serve</li>
+                                                <li>Shape</li>
+                                                <li>Show</li>
+                                                <li>Signal</li>
+                                                <li>Signify</li>
+                                                <li>Simplify</li>
+                                                <li>Simulate</li>
+                                                <li>Situate</li>
+                                                <li>Solidify</li>
+                                                <li>Solve</li>
+                                                <li>Span</li>
+                                                <li>Specify</li>
+                                                <li>Stabilize</li>
+                                                <li>Start</li>
+                                                <li>State</li>
+                                                <li>Stem From</li>
+                                                <li>Stimulate</li>
+                                                <li>Structure</li>
+                                                <li>Study</li>
+                                                <li>Subject</li>
+                                                <li>Submit</li>
+                                                <li>Substantiate</li>
+                                                <li>Succeed</li>
+                                                <li>Suggest</li>
+                                                <li>Summarize</li>
+                                                <li>Supervise</li>
+                                                <li>Supply</li>
+                                                <li>Support</li>
+                                                <li>Synthesize</li>
+                                                <li>Systematize</li>
+                                                <li>Tailor</li>
+                                                <li>Taint</li>
+                                                <li>Take</li>
+                                                <li>Target</li>
+                                                <li>Teach</li>
+                                                <li>Terminate</li>
+                                                <li>Test</li>
+                                                <li>Testify</li>
+                                                <li>Theorize</li>
+                                                <li>Transform</li>
+                                                <li>Translate</li>
+                                                <li>Transmit</li>
+                                                <li>Transport</li>
+                                                <li>Treat</li>
+                                                <li>Trigger</li>
+                                                <li>Unify</li>
+                                                <li>Unite</li>
+                                                <li>Update</li>
+                                                <li>Use</li>
+                                                <li>Utilize</li>
+                                                <li>Vanquish</li>
+                                                <li>Verify</li>
+                                                <li>Write</li>
+                                                <li>Yield</li>
+                                            </ul>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                                                            }
+                                                            else
+                                                            {
+                            <textarea class="form-control" id="@c.questionChoiceID" style="min-width: 50%" onchange="jsAutoSave(@ss.SubStep_ID, this.id, this.value);">@answerString</textarea>
+
+                                                            }
+                                                            break;
+                                                        case "Yes_No":
+                            <label class="radio-inline">
+                                <input type="radio" name="@c.questionChoiceID" id="inlineRadio1" value="1"
+                                       onchange="jsAutoSave(@ss.SubStep_ID, this.name, this.value);"
+                                       @yesChkd> Yes
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="@c.questionChoiceID" id="inlineRadio2" value="0"
+                                       onchange="jsAutoSave(@ss.SubStep_ID, this.name, this.value);"
+                                       @noChkd> No
+                            </label>
+                                                            break;
+                                                        case "MultipleSelection":
+                            <label class="checkbox" style="font-weight:normal">
+                                <input type="checkbox" id="@c.questionChoiceID" name="@c.subStepQuestionID"
+                                       onchange="jsAutoSave(@ss.SubStep_ID, this.id, this.checked);" @chkd />
+                                @c.Choice
+                            </label>
+                                                            break;
+                                                        case "MultipleChoice":
+                            <label class="radio-inline">
+                                <input type="radio" id="@c.questionChoiceID" class="radio" name="@c.subStepQuestionID" value="1" onchange="jsAutoSave(@ss.SubStep_ID, this.id, this.checked);" @chkd> @c.Choice
+                            </label>
+                                                            break;
+                                                        case "DateSelector":
+                            <input type="text" class="form-control" style="width:25%; background-color:white"
+                                   data-provide="datepicker"
+                                   data-date-format="mm/dd/yyyy" readonly="readonly"
+                                   id="@c.questionChoiceID"
+                                   onchange="jsAutoSave(@ss.SubStep_ID, this.id, this.value);" value="@answerString" />
+                                                            break;
+                                                        default:
+                                                            break;
+                                                    }
+
+                                                }
+                            <div class="clearfix"></div>
+                                            }
+                            }
+                            <div class="text-right">
+                                <br />
+                                @Html.ActionLink("Preview This Speech", "Details", new { id = Model.Speech_ID }, new { @class = "btn btn-primary btn-sm hidden-print", @target = "_blank" })
+                            </div>
+                        </div>
+                    </div>
+
+                                                ssCounter += 1;
+                                            }
+
+                    <div class="clearfix"></div>
+                                                sCounter += 1;
+                                            }
+                    <div><span id="msg" style="color:#3584ea;" /></div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<div class="clearfix"></div>
+@section Scripts{
+
+    <script src="~/Scripts/Speech.js"></script>
+    <script src="~/Scripts/CustomTreeView.js"></script>
+    <script src="~/Scripts/star-rating.min.js"></script>
+
+    <script>
+        $('[data-toggle="tooltip"]').tooltip();
+    </script>
+}

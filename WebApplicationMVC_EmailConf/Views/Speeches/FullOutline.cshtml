@@ -1,0 +1,55 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Speech
+@using WebApplicationMVC_EmailConf.Models
+@{SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+@{
+    ViewBag.Title = "Outline";
+}
+
+<h2>Preview Speech - Outline</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        @foreach (Step S in db.Steps)
+        {
+            <dt>
+                @S.Name
+            </dt>
+            <dd>
+                <ul class="list-group">
+                    @foreach (Sub_Step SS in S.Sub_Step.ToList<Sub_Step>())
+                {
+                        <li class="list-group-item">
+                            @SS.Name
+                            <p>
+                                <ul class="list-group">
+                                    @foreach (qSub_Step_Question SSQ in SS.qSub_Step_Question.ToList<qSub_Step_Question>())
+                                    {
+                                        List<qAnswer> answersToQ = Model.qAnswers.Where(m =>
+                                                      m.qQuestionChoice.qSub_Step_Question.subStepQuestionID == SSQ.subStepQuestionID).ToList<qAnswer>();
+
+                                        <li class="list-group-item">
+                                            @SSQ.qQuestion.Name
+                                            <ul class="list-group">
+                                                @foreach (qQuestionChoice qc in SSQ.qQuestionChoices.ToList<qQuestionChoice>())
+                                                {
+                                                    <li class="list-group-item">
+                                                        @qc.qChoice.name
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </li>
+                                    }
+                                </ul>
+                            </p>
+                        </li>
+                    }
+                </ul>
+            </dd>
+        }
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,35 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.SpeechMainPoint>
+
+@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+
+@if (Model != null)
+{
+    <ol style="list-style-type:upper-roman">
+        @foreach (SpeechMainPoint smp in Model)
+        {
+            var mpStr = string.Empty;
+            <li style="list-style-type:upper-roman">
+                @if (smp.MainPointID == null || !string.IsNullOrEmpty(smp.MainPointFreeText))
+                {
+                    mpStr = smp.MainPointFreeText;
+                }
+                else {
+                    mpStr = smp.MainPoint.Name;
+                }
+                @mpStr
+                <br>
+
+                @*Show mainpoints of strategies of speechsubpoints as subpoints*@
+                <ul style="list-style-type:upper-alpha">
+                    @foreach (SpeechSubPoint ssp in smp.SpeechSubPoints.OrderBy(o => o.Ordinal).ToList<SpeechSubPoint>())
+                    {
+                        <li>
+                            @ssp.SubPointFreeText
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+    </ol>
+}

@@ -1,0 +1,57 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Speech
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Speech</h4>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Topic)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Topic)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Research_Total)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Research_Total)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Entered_Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Entered_Date)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Updated_Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Updated_Date)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @*@Html.AntiForgeryToken()*@
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

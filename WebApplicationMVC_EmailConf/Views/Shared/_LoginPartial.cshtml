@@ -1,0 +1,58 @@
+﻿@using Microsoft.AspNet.Identity
+@using WebApplicationMVC_EmailConf.Controllers
+
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                @{
+                    if (MyHelpers.LoggedInMember != null)
+                    {
+                        @Html.ActionLink("Hello " + MyHelpers.LoggedInMember.FirstName + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                    }
+                }
+            </li>
+            <li>
+                @{
+                    try
+                    {
+                        var mm = MyHelpers.LoggedInMember.MemberMedias;
+                        if (mm.Count() > 0)
+                        {
+                            var pp = mm.Where(m => m.PrimaryPic == true);
+                            if (pp.Count() > 0)
+                            {
+                                string srcPath = pp.First().Path;
+                                if (srcPath != null)
+                                {
+                                    @*<img src="@Href("~" + srcPath)" style="max-height:50px" class="img-circle" />*@
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+
+                }
+            </li>
+            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+            <li>
+                <img src="~/Content/Images/shoppingcart_icon.png" style="width:45px;" />
+            </li>
+            <li>
+                <a href="/cart_items/cartitems">(@MyHelpers.cartCount())</a>
+            </li>
+        </ul>
+                        }
+                    }
+                    else
+                    {
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                            <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                        </ul>
+                    }

@@ -1,0 +1,26 @@
+﻿@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+@using PayPal.Api
+@{
+    ViewBag.Title = "FailureView";
+}
+
+@if (ViewBag.errors != null)
+{
+
+    <h2>FailureView</h2>
+
+    List<PayPal.Api.ErrorDetails> errors = ((PayPal.Api.Error)ViewBag.error).details;
+
+    <ul class="list-group">
+
+        @foreach (PayPal.Api.ErrorDetails e in errors)
+        {
+            <li class="list-group-item">
+                @e.field
+                @e.issue
+            </li>
+        }
+    </ul>
+
+}

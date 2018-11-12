@@ -1,0 +1,74 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.SpeechMainPoint>
+
+@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+@{ SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+<h3>Main Points</h3>
+
+@if (Model != null)
+{
+    <ol style="list-style-type:upper-roman">
+        @foreach (SpeechMainPoint mp in Model)
+        {
+            var mpStr = string.Empty;
+            if (mp.MainPointID == null || !string.IsNullOrEmpty(mp.MainPointFreeText))
+            {
+                mpStr = @mp.MainPointFreeText;
+            }
+            else {
+                mpStr = mp.MainPoint.Name;
+            }
+
+            <li class="col-md-12" style="list-style-type:upper-roman">
+                <span class="form-inline">
+
+                    <label id="lbl_@mp.SpeechMainPointID" style="width:300px;">@mpStr</label>
+
+                    @*EDIT BUTTON*@
+                    <button id="group_@mp.SpeechMainPointID" class="btn btn-default" 
+                            onclick="$('#edit_@mp.SpeechMainPointID').show(500);$('#lbl_@mp.SpeechMainPointID').hide(500);$('#group_@mp.SpeechMainPointID').hide(500);">
+                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </button>
+
+                    <span id="edit_@mp.SpeechMainPointID" class="right" style="display:none">
+                        @*TEXT BOX*@
+                        <input type="text" id="txt_@mp.SpeechMainPointID" style="width:300px;" class="form-control" onchange="" value="@mpStr" />
+
+                        @*SAVE BUTTON*@
+                        <button class="btn btn-default" onclick="updateMainPointText(@mp.SpeechMainPointID);">
+                            <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+                        </button>
+
+                        @*DELETE BUTTON*@
+                        <button class="btn btn-default" onclick="DeleteSMP(@mp.SpeechMainPointID);">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                        @*MOVE UP*@
+                        <button class="btn btn-default" onclick="MoveSMP_up(@mp.SpeechMainPointID);">
+                            <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+                        </button>
+
+                        @*MOVE DOWN*@
+                        <button class="btn btn-default" onclick="MoveSMP_down(@mp.SpeechMainPointID);">
+                            <span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+                        </button>
+
+
+                    </span>
+                </span>
+            </li>
+        }
+    </ol>
+}
+else {
+    <p>There are no saved Main Points for your outline, please add them below</p>
+}
+<div class="row col-md-4">
+    <div class="input-group">
+        <input type="text" id="newMainPoint" class="form-control" placeholder="New Main Point..." onkeyup="addingNewMP();">
+        <span class="input-group-btn">
+            <input id="newMainPointBtn" class="btn btn-default" type="button" style="display:none" onclick="addMainPoint();" value="+ Add">
+        </span>
+    </div>
+</div>

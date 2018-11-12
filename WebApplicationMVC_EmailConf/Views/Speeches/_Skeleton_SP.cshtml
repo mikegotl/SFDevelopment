@@ -1,0 +1,111 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.SpeechMainPoint>
+
+@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+@{ SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+<h3>Main Points</h3>
+
+@if (Model != null)
+{
+
+    <ol style="list-style-type:upper-roman">
+        @foreach (SpeechMainPoint smp in Model)
+        {
+            var mpStr = string.Empty;
+            <li style="list-style-type:upper-roman">
+                @if (smp.MainPointID == null || !string.IsNullOrEmpty(smp.MainPointFreeText))
+                {
+                    mpStr = smp.MainPointFreeText;
+                }
+                else {
+                    mpStr = smp.MainPoint.Name;
+                }
+                @mpStr
+                <br>
+
+                @*Show mainpoints of strategies of speechsubpoints as subpoints*@
+                <ul style="list-style-type:upper-alpha">
+                    @foreach (var ssp in smp.SpeechSubPoints)
+                    {
+                        <li>
+                            <span class="form-inline">
+                                @*LABEL*@
+                                <label id="lbl_@ssp.SpeechSubPointsID" style="width:300px;">@ssp.SubPointFreeText</label>
+
+                                @*EDIT BUTTON*@
+                                <button id="group_@ssp.SpeechSubPointsID" class="btn btn-default"   onclick="$('#editssp_@ssp.SpeechSubPointsID').show(500);$('#lbl_@ssp.SpeechSubPointsID').hide(500);$('#group_@ssp.SpeechSubPointsID').hide(500);">
+                                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                </button>
+
+                                @*EDIT CONTROLS*@
+                                <span id="editssp_@ssp.SpeechSubPointsID" style="display:none">
+                                    @*TEXT BOX*@
+                                    <input type="text" id="txt_ssp_@ssp.SpeechSubPointsID" style="width:300px;" class="form-control" onchange="" value="@ssp.SubPointFreeText" />
+
+                                    @*SAVE BUTTON*@
+                                    <button class="btn btn-default" onclick="updateSubPointText(@ssp.SpeechSubPointsID);">
+                                        <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span>
+                                    </button>
+
+                                    @*DELETE BUTTON*@
+                                    <button id="remove_@ssp.SpeechSubPointsID" class="btn btn-default " onclick="DeleteSSP(@ssp.SpeechSubPointsID);">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                    </button>
+                                    @*MOVE UP*@
+                                    <button class="btn btn-default" onclick="MoveSSP(@ssp.SpeechSubPointsID, 1);"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>
+
+                                    @*MOVE DOWN*@
+                                    <button class="btn btn-default" onclick="MoveSSP(@ssp.SpeechSubPointsID, 2);"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>
+
+                                </span>
+                            </span>
+                        </li>
+                    }
+                </ul>
+
+                <button type="button" class="btn btn-default btn-block btn-sm" onclick="SetSelectedMP(@smp.SpeechMainPointID);" data-toggle="modal" data-target="#myModal">Add Sub Point</button>
+            </li>
+        }
+    </ol>
+}
+else {
+    <p>There are no saved Main Points for your outline, please return to previous step.</p>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Strategies</h4>
+            </div>
+            <div class="modal-body">
+                @{
+                    List<StrategyCategory>
+                        cats = db.StrategyCategories.ToList<StrategyCategory>();
+                    foreach (StrategyCategory c in cats)
+                    {
+                        <h4>@c.Name</h4>
+                        foreach (StrategySubCategory sc in c.StrategySubCategories.ToList<StrategySubCategory>())
+                        {
+                            <h5>@sc.Name</h5>
+                            foreach (Strategy s in sc.Strategies.ToList<Strategy>())
+                            {
+                                <label class="radio-inline">
+                                    <input type="radio" name="strat" id="@s.StrategyID" value="1"> @s.Name
+                                </label>
+                            }
+                        }
+                    }
+                    <input type="text" class="form-control" id="txtCustomSubpoint" placeholder="Enter Your Own Subpoint" />
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="AddSubPoint();" data-dismiss="modal">Add as sub point</button>
+            </div>
+        </div>
+    </div>
+</div>

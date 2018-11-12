@@ -1,0 +1,34 @@
+﻿@model WebApplicationMVC_EmailConf.Models.qSub_Step_Question
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>qSub_Step_Question</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.qQuestion.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qQuestion.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Sub_Step.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Sub_Step.Name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.subStepQuestionID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

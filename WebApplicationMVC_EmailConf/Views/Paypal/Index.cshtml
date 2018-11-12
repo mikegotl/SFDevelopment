@@ -1,0 +1,206 @@
+﻿@using WebApplicationMVC_EmailConf.Controllers
+@model PayPal.Api.CreditCard
+
+@{
+    ViewBag.Title = "Index";
+}
+<style type="text/css">
+    .input-hidden {
+        position: absolute;
+        left: -9999px;
+    }
+
+    input[type=radio]:checked + label > img {
+        border: 1px solid #fff;
+        box-shadow: 0 0 3px 3px #090;
+    }
+
+    /* Stuff after this is only to make things more pretty */
+
+    input[type=radio] + label > img {
+        border: 1px dashed #444;
+        width: 70px;
+        transition: 500ms all;
+    }
+
+    input[type=radio]:checked + label > img {
+        transform: rotateZ(-10deg) rotateX(10deg);
+    }
+
+    /*html {
+        background-color: #fff;
+        background-size: 100% 1.2em;
+        background-image: linear-gradient( 90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px), linear-gradient( #eee .1em, transparent .1em);
+    }*/
+</style>
+
+@if ((PayPal.Api.Error)ViewBag.error != null)
+{
+    <h2>FailureView</h2>
+    if (ViewBag.message != null)
+    {
+        <div class="alert alert-warning">
+            @ViewBag.message;
+        </div>
+    }
+
+    var errormsg = (PayPal.Api.Error)ViewBag.error;
+    if (errormsg != null)
+    {
+        <div class="alert alert-danger alert-dismissable">
+            @errormsg.message
+        </div>
+    }
+
+
+    List<PayPal.Api.ErrorDetails> errors = ((PayPal.Api.Error)ViewBag.error).details;
+    if (errors != null)
+    {
+        if (errors.Count() > 0)
+        {
+            <ul class="list-group">
+                @foreach (PayPal.Api.ErrorDetails e in errors)
+                {
+                    <li class="list-group-item list-group-item-danger">
+                        @e.field
+                        @e.issue
+                    </li>
+                }
+            </ul>
+        }
+    }
+
+    if (ViewBag.cnnerror != null)
+    {
+        <div class="alert alert-danger alert-dismissable">
+            @ViewBag.cnnerror
+        </div>
+    }
+
+}
+
+@using (Html.BeginForm("PaymentWithCreditCard", "Paypal", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(model => model.billing_address.country_code)
+
+    <div class="form-horizontal col-md-8">
+        <hr />
+        <h3>Card Information</h3>
+
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                <label>Cardholder's Name</label>
+            </div>
+            <div class="col-md-10">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input name="first_name" value="@Model.first_name" class="form-control" placeholder="First Name" />
+                        @Html.ValidationMessageFor(model => model.first_name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input name="last_name" value="@Model.last_name" class="form-control" placeholder="Last Name" />
+                        @Html.ValidationMessageFor(model => model.last_name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.number, "Number", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input name="number" id="number" class="form-control" placeholder="Debit/Credit Card Number" />
+                @Html.ValidationMessageFor(model => model.number, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label col-md-2">
+                <label>Card Expiration</label>
+            </div>
+            <div class="col-md-10 ">
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.DropDownListFor(x => x.expire_month, MyHelpers.Months, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.billing_address.state, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.DropDownListFor(x => x.expire_year, MyHelpers.Years(0, 30), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.expire_year, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-3">
+                        <input name="cvv2" id="cvv2" value="@Model.cvv2" placeholder="CVV2" class="form-control" />
+                        @Html.ValidationMessageFor(model => model.cvv2, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">Card Type</label>
+            <div class="col-md-10">
+
+                <input type="radio" name="type" id="visa" class="input-hidden" value="visa" />
+                <label for="visa">
+                    <img src="~/Content/Images/Logos/visa.png" />
+                </label>
+
+                <input type="radio" name="type" id="mc" class="input-hidden" value="mastercard" />
+                <label for="mc">
+                    <img src="~/Content/Images/Logos/mastercard.png" />
+                </label>
+
+                <input type="radio" name="type" id="discover" class="input-hidden" value="discover" />
+                <label for="discover">
+                    <img src="~/Content/Images/Logos/discover.png" />
+                </label>
+
+                <input type="radio" name="type" id="amex" class="input-hidden" value="amex" />
+                <label for="amex">
+                    <img src="~/Content/Images/Logos/amex sq.jpg" />
+                </label>
+            </div>
+        </div>
+
+        <h3>Billing Address</h3>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.billing_address.line1, "Address", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.billing_address.line1, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.billing_address.line1, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.billing_address.city, "City", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.billing_address.city, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.billing_address.city, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.billing_address.state, "State", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(x => x.billing_address.state, MyHelpers.States, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.billing_address.state, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.billing_address.postal_code, "Postal Code", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.billing_address.postal_code, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.billing_address.postal_code, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group text-right">
+                <input type="submit" value="Submit Payment" class="btn btn-primary" />
+            </div>
+        </div>
+        <hr />
+    </div>
+
+    <div class="clearfix"></div>
+}

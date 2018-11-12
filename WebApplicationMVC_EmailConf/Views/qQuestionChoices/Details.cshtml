@@ -1,0 +1,47 @@
+﻿@model WebApplicationMVC_EmailConf.Models.qQuestionChoice
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>qQuestionChoice</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Question Choice ID
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.questionChoiceID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.qChoice.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qChoice.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qChoiceType.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qChoiceType.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.qSub_Step_Question.subStepQuestionID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qSub_Step_Question.subStepQuestionID)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.questionChoiceID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

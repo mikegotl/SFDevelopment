@@ -1,0 +1,124 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.SpeechMainPoint>
+
+@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+@{ SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+<h3>Outline</h3>
+@if (Model != null)
+{
+    int Blank_T_ID = db.Transitions.Where(m => m.Name == "").FirstOrDefault().TransitionID;
+
+    //Get saved subpoint research source records
+    <ol style="list-style-type:upper-roman">
+        @foreach (SpeechMainPoint smp in Model)
+        {
+            <li style="list-style-type:upper-roman">
+                @if (smp.MainPointID == null || !string.IsNullOrEmpty(smp.MainPointFreeText))
+                {
+                    @smp.MainPointFreeText
+                }
+                else {
+                    @smp.MainPoint.Name
+                }<br>
+
+                <ul style="list-style-type:upper-alpha">
+                    @foreach (SpeechSubPoint ssp in smp.SpeechSubPoints.ToList<SpeechSubPoint>())
+                    {
+                        //Get saved summaries
+                        var savedSummaries = db.SpeechSubpointResearchSummaries.Where(m => m.SpeechSubPointsID == ssp.SpeechSubPointsID).FirstOrDefault();
+                        string summaryText = string.Empty;
+                        if (savedSummaries != null)
+                        {
+                            summaryText = savedSummaries.SummaryText;
+                        }
+                        <li style="">
+                            @ssp.SubPointFreeText
+                            <ul style="list-style-type:decimal">
+                                <li>
+                                    Source:
+                                    <ul style="list-style-type:upper-alpha">
+                                        <li style="list-style-type:none;">
+                                            <p>@summaryText</p>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    @*CONNECTIONS*@
+                                    Connection(s):
+                                    <ul style="list-style-type:disc">
+                                        @{
+                                            List<SpeechSubpointConnection> connections = ViewBag.connections;
+                                            var cnnList = connections.Where(m => m.SpeechSubpointID == ssp.SpeechSubPointsID);
+                                            foreach (var c in cnnList)
+                                            {
+                                                <li>
+                                                    @c.ConnectionType.Name
+                                                    <p>"@c.Text"</p>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                </li>
+                                <li style="list-style-type:none">
+                                    <div class="row well">
+                                        @*TRANSITION*@
+                                        <h4>Transition:</h4>
+                                        @if (string.IsNullOrEmpty(ssp.TransitionText))
+                                        {
+                                            <button class="btn btn-default btn-sm btn-block"
+                                                    data-toggle="modal" data-target="#ModalTransition" onclick="SetSelectedSSP(@ssp.SpeechSubPointsID);">
+                                                Add Transition
+                                            </button>
+                                        }
+                                        else {
+                                            <p>@ssp.TransitionText</p>
+                                            string editTxtID = "TransTxt" + ssp.SpeechSubPointsID;
+                                            <textarea id="@editTxtID" class="form-control" rows="5" style="display:none">@ssp.TransitionText</textarea>
+
+                                            var savebtnid = "saveTransTxt" + ssp.SpeechSubPointsID;
+                                            <button id="@savebtnid" class="btn btn-default btn-block" style="display:none;" onclick="EditTransition(@ssp.SpeechSubPointsID, @editTxtID)"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></button>
+
+                                            <button class="btn btn-primary btn-sm btn-block" onclick="$('#@editTxtID').show(500); $('#@savebtnid').show(500);">
+                                                Edit Transition
+                                            </button>
+                                        }
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                                            }
+                </ul>
+            </li>
+                                            }
+    </ol>
+                                            }
+
+<!-- Modal -->
+<div class="modal fade" id="ModalTransition" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Transition</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <h5>Select a transitional phrase</h5>
+                    @Html.DropDownList("Transitions", null, htmlAttributes: new { @class = "form-control" })
+                    <br />
+                    <p>Complete your transitional sentence</p>
+                    <textarea id="trans_txt" class="form-control" rows="5" placeholder=""></textarea>
+                    <button class="btn btn-default" onclick="saveSSP_DDL_Transition();" data-dismiss="modal">
+                        Submit
+                    </button>
+
+                    <div class="modal-footer">
+                        <label id="transition_message"></label>
+                        <button type="button" class="btn btn-default " data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

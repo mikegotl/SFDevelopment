@@ -1,0 +1,45 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Controllers.cartItemListed>
+
+@{
+    ViewBag.Title = "Shopping Cart Items";
+}
+
+<h2>Shopping Cart Items</h2>
+<br />
+<div class="row">
+    <table class="table ">
+        <tr>
+            <th>Product Item</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Remove</th>
+        </tr>
+
+        @{
+            foreach (var i in Model)
+            {
+                <tr>
+                    <td>
+                        @i.catalogItem.Name
+                    </td>
+                    <td>@Html.Raw(i.catalogItem.Description)</td>
+                    <td>
+                        @i.quantity
+                    </td>
+                    <td>
+                        @Html.ActionLink("x", "RemoveFromCart", new { id = i.catalogItem.Catalog_ItemID })
+                    </td>
+                </tr>
+            }
+
+        }
+    </table>
+</div>
+<div class="row">
+    @if (Model.Count() > 0)
+    {
+
+        <a href="@Url.Action("checkout","Checkout")" class="btn btn-info">Checkout</a>
+    }
+</div>
+<div class="clearfix"></div>

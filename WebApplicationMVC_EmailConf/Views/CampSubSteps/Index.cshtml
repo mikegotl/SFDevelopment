@@ -1,0 +1,47 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.CampSubStep>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Sub Step</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Sub Step Name
+        </th>
+        <th>
+            Content
+        </th>
+        <th>
+            Step Name
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                <div style="overflow:scroll; max-height:200px;max-width:500px;">
+                    @Html.Raw(item.SubStepContent)
+                </div>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CampStep.Name)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.SubStepID }) |
+                @Html.ActionLink("Preview", "Details", new { id = item.SubStepID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.SubStepID })
+            </td>
+        </tr>
+    }
+</table>

@@ -1,0 +1,84 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.SpeechMainPoint>
+
+@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+@{ SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+<h3>Outline</h3>
+@if (Model != null)
+{
+
+    //Get saved subpoint research source records
+    <ol style="list-style-type:upper-roman">
+        @foreach (SpeechMainPoint smp in Model)
+        {
+            <li style="list-style-type:upper-roman">
+                @if (smp.MainPointID == null || !string.IsNullOrEmpty(smp.MainPointFreeText))
+                {
+                    @smp.MainPointFreeText
+                }
+                else {
+                    @smp.MainPoint.Name
+                }<br>
+
+                <ul style="list-style-type:upper-alpha">
+                    @foreach (SpeechSubPoint ssp in smp.SpeechSubPoints.ToList<SpeechSubPoint>())
+                    {
+                        //Get saved summaries
+                        var savedSummaries = db.SpeechSubpointResearchSummaries.Where(m => m.SpeechSubPointsID == ssp.SpeechSubPointsID).FirstOrDefault();
+                        string summaryText = string.Empty;
+                        if (savedSummaries != null)
+                        {
+                            summaryText = savedSummaries.SummaryText;
+                        }
+                        <li style="">
+                            @ssp.SubPointFreeText
+                            <ul style="list-style-type:decimal">
+                                <li>
+                                    Research
+                                    <ul style="list-style-type:upper-alpha">
+                                        <li style="list-style-type:none;">
+                                            <p>@summaryText</p>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    Connections:
+                                    <ul style="list-style-type:upper-alpha">
+                                        @{
+                                            List<SpeechSubpointConnection> connections = ViewBag.connections;
+                                            var cnnList = connections.Where(m => m.SpeechSubpointID == ssp.SpeechSubPointsID);
+                                            foreach (var c in cnnList)
+                                            {
+                                                <li>
+                                                    @c.ConnectionType.Name
+                                                    <p>"@c.Text"</p>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                </li>
+                            </ul>
+                            <div class="well" style="background-color:white">
+                                <b>Transition:</b>
+                                @{
+                                    if (string.IsNullOrEmpty(ssp.TransitionText))
+                                    {
+                                        <span class="form-inline">
+                                            Select a transition from menu @Html.DropDownList("Transitions", null, htmlAttributes: new { @class = "form-control" }) <br />or create your own <input type="text" placeholder="My Custom Transition" class="form-control" />
+                                            <button class="btn btn-default" onclick="saveSSPTransition();"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
+                                        </span>
+
+                                    }
+                                    else {
+                                        <p>@ssp.TransitionText</p>
+                                    }
+                                }
+                            </div>
+                        </li>
+                                    }
+                </ul>
+            </li>
+                                    }
+    </ol>
+                                    }

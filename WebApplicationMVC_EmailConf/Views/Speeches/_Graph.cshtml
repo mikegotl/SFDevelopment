@@ -1,0 +1,61 @@
+﻿@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+@{ SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+<div>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">My Graph</a></li>
+        <li role="presentation"><a href="#speechType" aria-controls="speechType" role="tab" data-toggle="tab">Speech Type</a></li>
+        <li role="presentation"><a href="#stratType" aria-controls="stratType" role="tab" data-toggle="tab">Strategy Type</a></li>
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">
+            @{
+                    string concat = ViewBag.concat;
+
+                    switch (concat)
+                    {
+                        case "11":
+                            <img src="~/Content/Images/Speech-Graph-Low-Low.jpg" />
+                            break;
+                        case "12":
+                            <img src="~/Content/Images/Speech-Graph-Low-Medium.jpg" />
+                            break;
+                        case "13":
+                            <img src="~/Content/Images/Speech-Graph-Low-High.jpg" />
+                            break;
+                        case "21":
+                            <img src="~/Content/Images/Speech-Graph-Medium-Low.jpg" />
+                            break;
+                        case "22":
+                            <img src="~/Content/Images/Speech-Graph-Medium-Medium.jpg" />
+                            break;
+                        case "23":
+                            <img src="~/Content/Images/Speech-Graph-Medium-High.jpg" />
+                            break;
+                        case "31":
+                            <img src="~/Content/Images/Speech-Graph-High-Low.jpg" />
+                            break;
+                        case "32":
+                            <img src="~/Content/Images/Speech-Graph-High-Medium.jpg" />
+                            break;
+                        case "33":
+                            <img src="~/Content/Images/Speech-Graph-High-High.jpg" />
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+            @*<img src="~/Content/Images/strattype2.jpg" style="width:100%" />*@
+        </div>
+        <div role="tabpanel" class="tab-pane" id="speechType">
+            <img src="~/Content/Images/speechtype.png" style="width:100%" />
+        </div>
+        <div role="tabpanel" class="tab-pane" id="stratType">
+            <img src="~/Content/Images/ss_3rdtab.png" style="width:100%" />
+        </div>
+    </div>
+</div>

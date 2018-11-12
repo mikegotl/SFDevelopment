@@ -1,0 +1,53 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.Speech>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>My Speeches</h2>
+<button class="btn btn-primary btn-sm" onclick="window.location.href='/Speeches/Create'">Create a speech</button>
+<br /><br />
+<table id="mySpeeches" class="table display table-responsive table-striped table-hover table-striped">
+    <thead>
+        <tr>
+            <th>
+                Speech ID
+            </th>
+            <th>
+                Topic
+            </th>
+            <th>
+                Creation Date
+            </th>
+            <th>
+                Last Updated Date
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Speech_ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Topic)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Entered_Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Updated_Date)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Speech", new { id = item.Speech_ID }) |
+                    @Html.ActionLink("Preview", "Details", new { id = item.Speech_ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Speech_ID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

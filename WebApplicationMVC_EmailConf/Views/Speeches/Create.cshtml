@@ -1,0 +1,100 @@
+﻿@model WebApplicationMVC_EmailConf.Models.Speech
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Welcome to the Speech Formula Wizard</h2>
+<h3>Let's get started building your speech.</h3>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal col-md-6">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Topic, "Speech Title", htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-8">
+                @Html.EditorFor(model => model.Topic, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            @if (ViewBag.isStudentOrProfessor == true)
+            {
+                @Html.LabelFor(model => model.courseName, "Course Name", htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-8">
+                    @Html.EditorFor(model => model.courseName, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+
+                @Html.LabelFor(model => model.instrEmail, "Professor's Email", htmlAttributes: new { @class = "control-label col-md-4" })
+                <div class="col-md-8">
+                    @Html.EditorFor(model => model.instrEmail, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+            }
+        </div>
+
+        @{
+            if (ViewBag.isStudentOrProfessor == true)
+            {
+                <div class="form-group well">
+                    <div class="checkbox">
+                        <label>
+                            <input id="checkShowProdAndCourse" type="checkbox" /> Please assign this speech to my Professor so they can provide feedback.
+                        </label>
+                        <p><b>Note:</b>  Your Professor must register their course to enable this option.  </p>
+                    </div>
+
+                    <div id="selectProfAndCourse" style="display:none" class="col-md-12">
+                        <label>Select your Professor and Course:</label>
+                        @Html.DropDownList("professors", null, htmlAttributes: new { @class = "form-control" })<br />
+                        @Html.DropDownList("CourseID", new SelectList(string.Empty, "courseID", "courseCode"), "Please select a Course", new { @class = "form-control" })
+                    </div>
+                </div>
+            }
+
+        }
+        <div class="form-group">
+            <div class="text-right">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+
+            }
+@section Scripts{
+    <script>
+        $("#checkShowProdAndCourse").change(function () {
+
+            if ($("#checkShowProdAndCourse").is(':checked'))
+                $("#selectProfAndCourse").show();  // checked
+            else
+                $("#selectProfAndCourse").hide();  // unchecked
+
+        })
+
+        $("#professors").change(function () {
+            $("#CourseID").empty();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetCourses")', // we are calling json method
+                dataType: 'json',
+                data: { professorID: $("#professors").val() },
+                success: function (courses) {
+                    $.each(courses, function (i, course) {
+                        $("#CourseID").append('<option value="' + course.Value + '">' +
+                             course.Text + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Failed to retrieve Courses.' + ex);
+                }
+            });
+            return false;
+        });
+    </script>
+}

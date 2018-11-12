@@ -1,0 +1,28 @@
+﻿This template has EF installed, Identity setup with Email Confirmation-Required Registration
+
+
+Phase I of SpeechSage
+
+	Speech DB Model in MODELS
+
+		Revised DB Schema from Copy of original DB
+
+		Localize DB
+
+		Create MODEL from DB in EF
+			
+	Scaffold Admin CRUDs for speech tables
+
+	Make Copies of all CRUDS (User)
+
+	Speech Page based on User CRUDS from last step
+
+		Speech Navigation Bar
+
+		Speech Form(s)
+
+		Auto-Saving on each textarea 
+
+			Create WCF service to save speech components for user(member)
+
+	Member Profile View with ability to upload photo

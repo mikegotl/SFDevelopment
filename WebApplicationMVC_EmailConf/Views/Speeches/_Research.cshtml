@@ -1,0 +1,115 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.SpeechMainPoint>
+
+@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+@{ SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+<h3>Outline</h3>
+@if (Model != null)
+{
+
+    //Get saved subpoint research source records
+    <ol style="list-style-type:upper-roman">
+        @foreach (SpeechMainPoint smp in Model)
+        {
+            <li style="list-style-type:upper-roman">
+                @if (smp.MainPointID == null || !string.IsNullOrEmpty(smp.MainPointFreeText))
+                {
+                    @smp.MainPointFreeText
+                }
+                else {
+                    @smp.MainPoint.Name
+                }<br>
+
+                <ul style="list-style-type:upper-alpha">
+                    @foreach (SpeechSubPoint ssp in smp.SpeechSubPoints.ToList<SpeechSubPoint>())
+                    {
+                        //Get saved summaries
+                        var savedSummaries = db.SpeechSubpointResearchSummaries.Where(m => m.SpeechSubPointsID == ssp.SpeechSubPointsID);
+                        string summaryText = string.Empty;
+                        if (savedSummaries.Count()>0)
+                        {
+                            summaryText = savedSummaries.FirstOrDefault().SummaryText;
+                        }
+
+                        <li style="">
+                            @ssp.SubPointFreeText
+                            <ul style="list-style-type:decimal">
+                                <li>
+                                    Research
+                                    <ul style="list-style-type:none">
+                                        @*//each saved research item for this subpoint*@
+                                        @foreach (var r in ssp.SpeechSubpointResearches.ToList<SpeechSubpointResearch>())
+                                        {
+                                            //show as panel
+                                            <li>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <div class="text-center">
+                                                            <b>For Reference Purposes Only</b>
+                                                        </div>
+                                                        <span>
+                                                            @r.Source.Who
+                                                            <button class="btn btn-default btn-sm right" onclick="DeleteSSPR(@r.SpeechSubpointResearchID);"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                                                        </span>
+                                                    </div>
+                                                    <div class="panel-body" style="background-color:lightgray">
+                                                        @r.Source.When
+                                                        @r.Source.What
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                        <li><button class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#ModalSource" onclick="SetSelectedSSP(@ssp.SpeechSubPointsID);">Add Source</button></li>
+                                        <li style="list-style-type:none">
+                                            <div class="">
+                                                <br /><br />
+                                                <textarea id="@ssp.SpeechSubPointsID" class="form-control" rows="10" onchange="recordResearchSummary(this.id, this.value);"
+                                                          placeholder='Write the exact words you will say to your audience about this source.  Be sure to give credit to the authors.  For example: Pearson, Nelson, Titsworth and Harter (2012) in the popular communication textbook Human Communication, define hearing "as the act of ear receiving sound". For instance, someone who is deaf cannot receive sound.  They (Pearson, et al, 2012) go on to define listening as the "active process of receiving, constructing meaning from, and responding to spoken and/or nonverbal messages".  Perhaps this why Harvey Robbins (1992) reports that listening is often a skill that is acquired.  "Isn’t it ironic, that the areas that we spend the most time, speaking and listening are the areas in which we are least trained?  Listening is the most challenging of the communication skills and the most frequently ignored"'>@summaryText</textarea>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+
+                    }
+                </ul>
+            </li>
+        }
+    </ol>
+}
+<!-- Modal -->
+<div class="modal fade" id="ModalSource" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Research Sources</h4>
+            </div>
+            <div class="modal-body">
+                @{
+                    List<Source> _sources = ViewBag.sources;
+                    foreach (Source s in _sources)
+                    {
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <label class="radio-inline">
+                                    <input type="radio" name="radioSources" id="@s.SourceID" />
+                                    @s.Who
+                                </label>
+                            </div>
+                            <div class="panel-body">
+                                <p>@s.When</p><p>@s.What</p>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="AddSourceToSubPoint();" data-dismiss="modal">Add Source</button>
+            </div>
+        </div>
+    </div>
+</div>

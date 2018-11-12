@@ -1,0 +1,175 @@
+﻿@model WebApplicationMVC_EmailConf.Models.CredChecker
+@using WebApplicationMVC_EmailConf.Models
+
+@{
+    ViewBag.Title = "Create";
+
+    List<CredCheckerQuestion> topQuestions = ViewBag.TopQuestions;
+    SpeechSageDBEntities db = new SpeechSageDBEntities();
+
+}
+<link href="~/Content/css/star-rating.min.css" rel="stylesheet" />
+<style>
+    .dropdown-submenu {
+        position: relative;
+    }
+
+        .dropdown-submenu > .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: -6px;
+            margin-left: -1px;
+            -webkit-border-radius: 0 6px 6px 6px;
+            -moz-border-radius: 0 6px 6px;
+            border-radius: 0 6px 6px 6px;
+        }
+
+        .dropdown-submenu:hover > .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-submenu > a:after {
+            display: block;
+            content: " ";
+            float: right;
+            width: 0;
+            height: 0;
+            border-color: transparent;
+            border-style: solid;
+            border-width: 5px 0 5px 5px;
+            border-left-color: #ccc;
+            margin-top: 5px;
+            margin-right: -10px;
+        }
+
+        .dropdown-submenu:hover > a:after {
+            border-left-color: #fff;
+        }
+
+        .dropdown-submenu.pull-left {
+            float: none;
+        }
+
+            .dropdown-submenu.pull-left > .dropdown-menu {
+                left: -100%;
+                margin-left: 10px;
+                -webkit-border-radius: 6px 0 6px 6px;
+                -moz-border-radius: 6px 0 6px 6px;
+                border-radius: 6px 0 6px 6px;
+            }
+</style>
+<h2>Credibility Checker</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="col-md-6">
+
+            <ul class="list-group">
+
+                @foreach (CredCheckerQuestion q in topQuestions)
+                {
+                    <li class="list-group-item">
+                        @*DROPDOWN*@
+                        <div class="dropdown">
+                            <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-primary" data-target="#" href="/page.html">
+                                @q.QuestionNumber) @q.Question <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                                @*Direct Choices to this question*@
+                                @foreach (CredCheckerChoice c in q.CredCheckerChoices)
+                                {
+                                    <li><a href="#" class="choice" id="@c.CCCID" name="@c.Points">@c.Choice</a></li>
+                                }
+
+                                @*Add Child Question as SubMenu*@
+                                @{
+                                    var subQuestions = db.CredCheckerQuestions.Where(m => m.ParentQID == q.CCQID).ToList<CredCheckerQuestion>();
+
+                                    foreach (CredCheckerQuestion sq in subQuestions)
+                                    {
+                                        <li class="dropdown-submenu">
+                                            <a href="#">@sq.Question</a>
+                                            <ul class="dropdown-menu">
+                                                @foreach (CredCheckerChoice sqc in sq.CredCheckerChoices)
+                                                {
+                                                    <li><a href="#" name="@sqc.Points" class="choice" id="@sqc.CCCID">@sqc.Choice</a></li>
+                                                }
+                                            </ul>
+                                        </li>
+
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <label id="answerPH"></label>
+                        <input id="answerID" name="answerID" type="hidden" />
+                        <input id="answerPts" name="answerPts" class="answerPts" type="hidden" />
+                    </li>
+                                    }
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="hidden" id="hiddenScore" name="hiddenScore" />
+                    <label id="finalScore"></label>
+                    <input id="finalScoreInput" name="finalScoreInput" class="rating-loading" />
+                    <input type="submit" value="Save Test and Results" class="btn btn-default disabled" />(non-functional for demo purposes)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>             }
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts{
+    <script src="~/Scripts/star-rating.min.js"></script>
+    <script>
+        $(".choice").click(function () {
+            var t = this;
+            var ChoiceID = this.id;
+            var ChoiceText = t.innerText;
+            var ChoicePts = t.name;
+
+            //store choice text in placeholder label
+            var closestGroup = $(t).closest('.list-group-item');
+            var ph = $(closestGroup).find('#answerPH');
+            ph[0].innerText = ChoiceText;
+
+            //store answerID in hidden input field
+            var phID = $(closestGroup).find('#answerID');
+            phID.val(ChoiceID);
+
+            //store answer points in hidden input field
+            var hiddenPtsPH = $(closestGroup).find('#answerPts');
+            hiddenPtsPH.val(ChoicePts);
+
+            var ttl = 0;
+
+            $(".answerPts").each(function (data) {
+                var pts = $(this).val();
+                if (pts != "") {
+                    ttl += parseInt(pts);
+                }
+            });
+
+            var finalScore = ttl / 20;
+
+            $("#hiddenScore").val(finalScore);
+            $("#finalScore")[0].innerText = ttl + "% or " + finalScore + " out of 5 stars";
+
+            $('#finalScoreInput').rating({ displayOnly: true, step: 0.5 });
+
+            $('#finalScoreInput').rating('update', finalScore);
+        });
+    </script>
+}

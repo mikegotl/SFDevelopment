@@ -1,0 +1,73 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.Catalog_Items>
+
+@{
+    ViewBag.Title = "Speech Catalog";
+}
+<br />
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Catalog</h2>
+            <h4>Select a package you would like to purchase.</h4>
+        </div>
+        @*<div class="col-md-9 well">
+            <h2 class="text-center">What does the Speech Formula System include?</h2>
+            <h3 class="text-center">A Course + A Tool + A Community = Success</h3>
+            <h4>Speech Camp (Course)</h4>
+            <p>
+                Journey through the 4 Steps to Conquer your FEAR. Discover why the fear exists and how you can overcome it using a series of activities and developmental speeches, which will help you conquer your fear and deliver a speech with confidence.
+            </p>
+            <h4>Speech Wizard (Tool)</h4>
+            <p>
+                Let the Speech Formula Wizard guide you through the 7 Steps of the speechmaking process. Your speech, cards and visuals will print out at the end. The Speech Wizard includes videos and aids to simplify the process.  The Credibility Checker monitors your sources to ensure you offer quality sources that are ethically cited.
+            </p>
+            <h4>Speech Studio (Community)</h4>
+            <p>
+                Create your Speech Profile and give and get feedback as you progress through the program.   Our team is here to answer any questions and support your journey.
+            </p>
+        </div>*@
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Package Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderBy(n => n.Ordinal).OrderBy(o => o.Catalog.Ordinal))
+            {
+                <tr>
+                    <td>@item.Catalog.Name</td>
+                    <td>@item.Name</td>
+                    <td>@Html.Raw(item.Description)</td>
+                    <td>@String.Format("{0:c}", item.Price)</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="javascript:window.location=('@Url.Action("AddToCart", "Cart_Items", new { Catalog_ItemID = @item.Catalog_ItemID })')">
+                            Add to Cart
+                        </button>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+    @using (Html.BeginForm("ProcessPromo", "Cart_Items"))
+    {
+        <div class="form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control" id="promo" name="promo" placeholder="Promo Code">
+            </div>
+
+            <button type="submit" class="btn btn-default">Process Promo Code</button>
+        </div>
+        
+    }
+</div>
+
+<div class="clearfix"></div>

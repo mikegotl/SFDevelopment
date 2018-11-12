@@ -1,0 +1,58 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.qQuestionChoice>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@if (ViewBag.NonFound == true)
+{
+    <h1>Non Found!</h1>
+}
+else
+{
+    <h2>Question Choices</h2>
+    <h3>For Step: @Model.FirstOrDefault().qSub_Step_Question.Sub_Step.Step.Name</h3>
+    <h3>For Sub Step: @Model.FirstOrDefault().qSub_Step_Question.Sub_Step.Name</h3>
+    <h3>For Question: @Model.FirstOrDefault().qSub_Step_Question.qQuestion.Name</h3>
+    <p>
+        @Html.ActionLink("Create New", "Create", new { ssq_id = ViewBag.ssq_id }, null)
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                Question
+            </th>
+            <th>Choice</th>
+            <th>
+                Choice Type
+            </th>
+
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.qSub_Step_Question.qQuestion.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.qChoice.name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.qChoiceType.name)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.questionChoiceID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.questionChoiceID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.questionChoiceID })
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+<p>
+    @Html.ActionLink("Create New Choice for this sub step question", "Create", new { ssq_id = ViewBag.ssq_id }, null)
+</p>

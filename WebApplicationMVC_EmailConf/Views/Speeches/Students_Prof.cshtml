@@ -1,0 +1,147 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.Member>
+
+@{
+    ViewBag.Title = "List";
+}
+
+<h1>Student List</h1>
+
+<div class="container">
+    <div class="col-md-8">
+        <table id="studSpeeches" class="table table-hover table-responsive table-bordered table-striped display">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Last</th>
+                    <th>First</th>
+                    <th>Email</th>
+                    <th>M/F</th>
+                    <th>DOB</th>
+                    <th>Location</th>
+                    <th>S#</th>
+                    @*<th></th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    string _dobStr = string.Empty;
+                    if (item.DOB != null)
+                    {
+                        DateTime _dob = (DateTime)item.DOB;
+                        _dobStr = _dob.ToString("yyyy-MM-dd");
+                    }
+                    <tr>
+                        <td>
+                            <input id="@item.UserID" type="checkbox" name="@item.AspNetUser.Email" class="checkbox" />
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                        <td><a href="mailto:@item.AspNetUser.Email">@item.AspNetUser.Email</a></td>
+                        <td>@Html.DisplayFor(modelItem => item.Gender1.Name)</td>
+                        <td width="100%">@_dobStr</td>
+                        <td width="100%">@item.Location, @item.State</td>
+                        <td>@item.Speeches.Count()</td>
+                        @*<td>
+                                <a href="#" onclick="window.location.href='/Speeches/Speech/@item.MemberID'">Edit</a> |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.MemberID })
+                            </td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+
+        <div class="well" id="theWell">
+            <button class="btn btn-default" onclick="selectAll();">Check All Visible Students</button>
+            <button class="btn btn-default" onclick="addEmails();">Add checked to email list</button>
+            <hr />
+            <div class="form-group">
+
+                <label>Subject:</label>
+                <input id="subject" class="form-control" type="text" />
+
+                <label>Body:</label>
+                <textarea id="body" class="form-control"></textarea>
+            </div>
+            <hr />
+            <ul class="list-inline">
+                @*<li style="background-color:lightsteelblue;padding:3px;">testemail</li>*@
+            </ul>
+            <hr />
+            <button class="btn btn-warning " onclick="clearAll();">Clear All</button>
+            <button class="btn btn-primary " onclick="sendEmails();">Send Bulk Email</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectAll() {
+        $(".checkbox").prop("checked", true);
+    }
+    function clearAll() {
+        $("#theWell ul").empty();
+    }
+    function addEmails() {
+        var matches = [];
+        $(".checkbox:checked").each(function () {
+            matches.push({ userid: this.id, email: this.name });
+            $(this).prop("checked", false);
+        });
+
+        $(matches).each(function (index) {
+            var _email = matches[index].email;
+            var _id = matches[index].userid;
+
+            var innerText = $("#theWell ul")[0].innerText;
+            if (innerText.indexOf(_email) == -1) {
+                $("#theWell ul").append("<li style='background-color:lightsteelblue;' id='" + _id + "' class='list-group-item'>" + _email + " <a class='btn btn-sm btn-danger'  onclick='RemoveLI(this)'>x</a></li>");
+            }
+        });
+    }
+    function RemoveLI(t) {
+        $(t).parent().remove();
+    }
+    function sendEmails() {
+        var subject = $("#subject").val();//replace from box
+        var body = $("#body").val();//replace from box
+
+        if (subject == "") {
+            alert("Subject is empty");
+            return;
+        }
+        if (body == "") {
+            alert("Body is empty");
+            return;
+        }
+
+        $("#theWell ul li").each(function (index) {
+            var userid = this.id;
+            //send email to user
+            sendEmail(userid);
+        });
+    }
+
+    isTest = true;
+
+    function sendEmail(userid) {
+        var url = "/Account/SendUserEmail";
+
+        if (isTest) {
+            var testUserID = "98f37048-8d1a-4b16-9058-8abd0b835e44";
+            userID = testUserID;//comment out when ready for real run
+        } else {
+            //do nothing, accept userId passed in to Post out
+        }
+
+        var subject = $("#subject").val();//replace from box
+        var body = $("#body").val();//replace from box
+
+        //alert(subject + " " + body + " " + userid);
+
+        $.post(url, { userID: userID, subject: subject, body: body }, function (data) {
+
+        });
+    }
+</script>

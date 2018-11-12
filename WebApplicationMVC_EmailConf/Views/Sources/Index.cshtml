@@ -1,0 +1,63 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.Source>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.When)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Who)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.What)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Speech.Topic)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SourceType.Name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.When)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Who)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.What)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreateDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Speech.Topic)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SourceType.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.SourceID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.SourceID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.SourceID })
+        </td>
+    </tr>
+}
+
+</table>

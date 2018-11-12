@@ -1,0 +1,56 @@
+﻿@using WebApplicationMVC_EmailConf.Controllers
+@using WebApplicationMVC_EmailConf.Models
+@{ SpeechSageDBEntities db = new SpeechSageDBEntities();}
+
+<div class="col-lg-push-2 col-md-push-2">
+    @{
+        int speechid = (int)ViewData["SpeechID"];
+
+        List<SpeechStrategy> speechStrats = db.SpeechStrategies.Where(m => m.SpeechID == speechid).ToList<SpeechStrategy>();
+        List<StrategyCategory> cats = db.StrategyCategories.ToList<StrategyCategory>();
+
+        foreach (StrategyCategory sc in cats)
+        {
+            <h3>@sc.Name</h3>
+            foreach (StrategySubCategory ssc in sc.StrategySubCategories.ToList<StrategySubCategory>())
+            {
+                <h5>@ssc.Name</h5>
+                foreach (Strategy s in ssc.Strategies.ToList<Strategy>())
+                {
+                    string chkd = string.Empty;
+                    List<SpeechStrategy> found_ss = speechStrats.Where(m => m.StrategyID == @s.StrategyID).ToList<SpeechStrategy>();
+
+                    if (found_ss.Count > 0)
+                    {
+                        chkd = "checked";
+                    }
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="@s.StrategyID" name="@s.StrategyID"
+                               onchange="jsAutoSaveStrat(this.id, this.checked);" @chkd />
+                        @s.Name
+                    </label>
+                }
+            }
+        }
+    }
+</div>
+
+<script>
+    function tooltipInit() {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+
+    function jsAutoSaveStrat(sid, checked) {
+        var url = "/Speeches/AutoSaveStrat";
+        $.post(url, { strategyID: sid, freeText: checked }, function (data) {
+            CheckSubStepCompletion(17);
+            RenderBestStrategy();
+        })
+    }
+
+    function RenderBestStrategy() {
+        $.post("/Speeches/RenderBestStrategy", null, function (data) {
+            $("#BestStrategy")[0].innerHTML = data;
+        });
+    }
+</script>

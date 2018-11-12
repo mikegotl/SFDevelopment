@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - MySpeechSage.com</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        h1, h2, h3, h4, h5 {
+            color: black;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: Arial;
+        }
+
+        p, span, pI {
+            font-family: Arial;
+            color: black;
+            font-size: 16px;
+        }
+
+        ul, li {
+            color: black;
+            font-family: Arial;
+            font-size: 16px;
+            font-weight: 100;
+        }
+
+        .pI {
+            text-indent: -1em;
+            padding-left: 1em;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+
+        hr {
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

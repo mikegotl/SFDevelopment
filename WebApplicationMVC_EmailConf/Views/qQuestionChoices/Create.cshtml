@@ -1,0 +1,45 @@
+﻿@model WebApplicationMVC_EmailConf.Models.qQuestionChoice
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+<h3>For Sub Step Question: @ViewBag.subStepQuestionName</h3>
+
+@using (Html.BeginForm())
+{
+    @*@Html.AntiForgeryToken()*@
+
+    <div class="form-horizontal">
+        <h4>qQuestionChoice</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <a><label for="choiceID" onclick="window.location.href=' @Url.Action("Index", "qChoices")'" class="control-label col-md-2">Choices</label></a>
+            <div class="col-md-10">
+                @Html.DropDownList("choiceID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.choiceID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <input type="hidden" id="ssq_id" name="ssq_id" value="@ViewBag.ssq_id" />
+
+        <div class="form-group">
+            <a><label for="choiceTypeID" onclick="window.location.href=' @Url.Action("Index", "qChoiceTypes") '" class="control-label col-md-2">Choice Types</label></a>
+            <div class="col-md-10">
+                @Html.DropDownList("choiceTypeID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.choiceTypeID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

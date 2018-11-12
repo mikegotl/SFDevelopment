@@ -1,0 +1,21 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.SpeechSlideSave>
+@using WebApplicationMVC_EmailConf.Models
+
+<h5>
+    Break down the full sentences you will say to your audience into key ideas you will display on your Slides.
+    Use only key words, break down the ideas — bullet whenever necessary.
+</h5>
+
+<a href="#"onclick="ResetSaveSlides()">Refresh All Slides</a>
+
+@foreach (SpeechSlideSave slide in Model)
+{
+    <div class="col-md-4">
+        <label class="lblSlide" id="@slide.SlideNbr">@slide.Label</label>
+    </div>
+    <div class="col-md-8">
+        <textarea class="form-control speechSlide" rows="10" 
+                  id="@slide.SlideNbr" 
+                  onchange="jsAutoSaveSpeechSlides(@slide.SlideNbr, '@slide.Label.ToString()')">@slide.Text</textarea>
+    </div>
+}

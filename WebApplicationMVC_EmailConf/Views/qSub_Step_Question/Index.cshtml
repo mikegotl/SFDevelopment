@@ -1,0 +1,51 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.qSub_Step_Question>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Sub_Step Questions</h2>
+
+@if (ViewBag.Scratch)
+{
+    <h3>For Step: @Model.FirstOrDefault().Sub_Step.Step.Name</h3>
+    <h3>For Sub Step: @Model.FirstOrDefault().Sub_Step.Name</h3>
+
+}
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Question
+        </th>
+        <th>
+            Sub Step
+        </th>
+        <th>Active</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.qQuestion.Name)
+            </td>
+            <td>
+                @item.Sub_Step.Step.Name / @item.Sub_Step.Name
+            </td>
+            <td>@item.Active</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.subStepQuestionID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.subStepQuestionID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.subStepQuestionID })
+            </td>
+        </tr>
+    }
+</table>
+
+<p>
+    @Html.ActionLink("Create New", "Create", new { ss_id = ViewBag.ss_id })
+</p>

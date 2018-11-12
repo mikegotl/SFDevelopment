@@ -1,0 +1,15 @@
+﻿@model WebApplicationMVC_EmailConf.Models.CampSubStep
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+<hr /><hr />
+<div class="table-bordered">
+    @Html.Raw(Model.SubStepContent)
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SubStepID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,44 @@
+﻿@model IEnumerable<WebApplicationMVC_EmailConf.Models.Course>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Courses</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Course Name</th>
+        <th>
+            Course Code
+        </th>
+        <th>
+            Institution
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.courseCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Institution.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.courseID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.courseID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.courseID })
+        </td>
+    </tr>
+}
+
+</table>
